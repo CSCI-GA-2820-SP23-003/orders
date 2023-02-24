@@ -1,9 +1,31 @@
 """
-Models for YourResourceModel
+Models for Orders Service
 
 All of the models are stored in this module
+
+Models
+------
+Order - An order placed by a customer
+
+Attributes:
+-----------
+customer id (number) - id of the customer placing the order
+status (string) - status of the order
+
+Order Item
+
+Attributes:
+-----------
+product id (number) - id of the product
+quantity (number) - quantity of the item
+price (number) - price of the product
+order id (number) - id of the order containing the item
 """
+
 import logging
+from enum import Enum
+from datetime import date
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
@@ -15,76 +37,127 @@ db = SQLAlchemy()
 # Function to initialize the database
 def init_db(app):
     """ Initializes the SQLAlchemy app """
-    YourResourceModel.init_db(app)
+    Order.init_db(app)
 
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
 
-class YourResourceModel(db.Model):
+class OrderStatus(Enum):
+    """Enumeration of valid Order Statuses"""
+
+    CONFIRMED = 0
+    IN_PROGRESS = 1
+    SHIPPED = 3
+    DELIVERED = 4
+    CANCELLED = 5
+
+
+class Order(db.Model):
     """
-    Class that represents a YourResourceModel
+    Class that represents an Order
+
+    This version uses a relational database for persistence which is hidden
+    from us by SQLAlchemy's object relational mappings (ORM)
     """
 
     app = None
 
+    ##################################################
     # Table Schema
+    ##################################################
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    customer_id = db.Column(db.Integer, nullable=False)
+    status = db.Column(
+        db.Enum(OrderStatus), nullable=False, server_default=(OrderStatus.CONFIRMED.name)
+    )
+    created_on = db.Column(db.Date(), nullable=False, default=date.today())
+    updated_on = db.Column(db.Date(), nullable=False, default=date.today())
+
+    ##################################################
+    # INSTANCE METHODS
+    ##################################################
 
     def __repr__(self):
-        return f"<YourResourceModel {self.name} id=[{self.id}]>"
+        return f"<Order: id={self.id}, customer_id={self.customer_id}, status={self.status}>"
 
     def create(self):
         """
-        Creates a YourResourceModel to the database
+        Creates an Order to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating order of customer# %s", self.customer_id)
         self.id = None  # pylint: disable=invalid-name
         db.session.add(self)
         db.session.commit()
 
     def update(self):
         """
-        Updates a YourResourceModel to the database
+        Updates an Order to the database
         """
-        logger.info("Saving %s", self.name)
+        if not self.id:
+            raise DataValidationError("Update called with empty ID field")
+        logger.info("Saving order# %s", self.id)
         db.session.commit()
 
     def delete(self):
-        """ Removes a YourResourceModel from the data store """
-        logger.info("Deleting %s", self.name)
+        """ Removes an Order from the data store """
+        logger.info("Deleting order# %s", self.id)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self):
-        """ Serializes a YourResourceModel into a dictionary """
-        return {"id": self.id, "name": self.name}
+        """ Serializes an Order into a dictionary """
+        return {
+            "id": self.id,
+            "customer_id": self.customer_id,
+            "status": self.status.name,  # convert enum to string
+            "created_on": self.created_on.isoformat(),
+            "updated_on": self.updated_on.isoformat()
+        }
 
     def deserialize(self, data):
         """
-        Deserializes a YourResourceModel from a dictionary
+        Deserializes an Order from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            if "id" in data:
+                self.id = data["id"]
+            self.customer_id = data["customer_id"]
+            if "status" in data:
+                self.status = getattr(OrderStatus, data["status"])
+            else:
+                self.status = OrderStatus.CONFIRMED
+            self.updated_on = date.today()
+        except AttributeError as error:
+            raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: missing " + error.args[0]
+                "Invalid Order: missing " + error.args[0]
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: body of request contained bad or no data - "
-                "Error message: " + error
+                "Invalid Order: body of request contained bad or no data - "
+                "Error message: " + str(error)
             ) from error
         return self
 
+    ##################################################
+    # CLASS METHODS
+    ##################################################
+
     @classmethod
-    def init_db(cls, app):
-        """ Initializes the database session """
+    def init_db(cls, app: Flask):
+        """Initializes the database session
+
+        :param app: the Flask app
+        :type data: Flask
+
+        """
         logger.info("Initializing database")
         cls.app = app
         # This is where we initialize SQLAlchemy from the Flask app
@@ -93,23 +166,35 @@ class YourResourceModel(db.Model):
         db.create_all()  # make our sqlalchemy tables
 
     @classmethod
-    def all(cls):
-        """ Returns all of the YourResourceModels in the database """
-        logger.info("Processing all YourResourceModels")
+    def all(cls) -> list:
+        """ Returns all of the Orders in the database """
+        logger.info("Processing all Orders")
         return cls.query.all()
 
     @classmethod
-    def find(cls, by_id):
-        """ Finds a YourResourceModel by it's ID """
-        logger.info("Processing lookup for id %s ...", by_id)
-        return cls.query.get(by_id)
+    def find(cls, order_id: int):
+        """Finds an Order by it's ID
+
+        :param order_id: the id of the Order to find
+        :type order_id: int
+
+        :return: an instance with the order_id, or None if not found
+        :return type: Order
+
+        """
+        logger.info("Processing lookup for order id %s ...", order_id)
+        return cls.query.get(order_id)
 
     @classmethod
-    def find_by_name(cls, name):
-        """Returns all YourResourceModels with the given name
+    def find_or_404(cls, order_id: int):
+        """Find an Order by it's id
 
-        Args:
-            name (string): the name of the YourResourceModels you want to match
+        :param order_id: the id of the Order to find
+        :type order_id: int
+
+        :return: an instance with the order_id, or 404_NOT_FOUND if not found
+        :return type: Order
+
         """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+        logger.info("Processing lookup or 404 for order id %s ...", order_id)
+        return cls.query.get_or_404(order_id)
