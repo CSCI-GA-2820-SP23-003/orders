@@ -70,7 +70,26 @@ class TestOrderService(TestCase):
             BASE_URL, json=test_order.serialize(), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
         # Check the data is correct
+        new_order = response.get_json()
+        self.assertNotEqual(new_order["id"], None)
+        self.assertEqual(new_order["customer_id"], test_order.customer_id)
+        self.assertEqual(new_order["status"], test_order.status.name)
+        self.assertEqual(len(new_order["items"]), 1)
+
+        new_item = new_order["items"][0]
+        self.assertEqual(new_item["product_id"], test_item.product_id)
+        self.assertEqual(new_item["quantity"], test_item.quantity)
+        self.assertEqual(new_item["price"], test_item.price)
+        self.assertEqual(new_item["order_id"], new_order["id"])
+
+        # Check that the location header was correct
+        response = self.app.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_order = response.get_json()
         self.assertNotEqual(new_order["id"], None)
         self.assertEqual(new_order["customer_id"], test_order.customer_id)
