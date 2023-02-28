@@ -43,15 +43,15 @@ def create_order():
     order = Order()
     order.deserialize(request.get_json())
     order.create()
-    location_url = url_for("read_orders", order_id=order.id, _external=True)
+    location_url = url_for("get_order", order_id=order.id, _external=True)
     app.logger.info("Order with ID [%s] created.", order.id)
     return jsonify(order.serialize()), status.HTTP_201_CREATED, {"Location": location_url}
 
 ######################################################################
-# READ AN ORDER
+# GET AN ORDER
 ######################################################################
 @app.route("/orders/<int:order_id>", methods=["GET"])
-def read_orders(order_id):
+def get_order(order_id):
     """
     Read a single Order
     This endpoint will return a Order based on it's id

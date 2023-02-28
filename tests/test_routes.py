@@ -131,7 +131,7 @@ class TestOrderService(TestCase):
         self.assertEqual(new_order["status"], test_order.status.name)
         self.assertEqual(len(new_order["items"]), 0)
 
-    def test_read_order_with_order(self):
+    def test_get_order_with_order(self):
         """It should Read a single Order"""
         # get the id of a order
         test_order = self._create_orders(1)[0]
@@ -140,7 +140,7 @@ class TestOrderService(TestCase):
         data = response.get_json()
         self.assertEqual(data["id"], test_order.id)
 
-    def test_read_order_with_no_order(self):
+    def test_get_order_with_no_order(self):
         """It should not Read a Pet thats not found"""
         response = self.app.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
