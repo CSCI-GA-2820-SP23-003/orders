@@ -43,8 +43,24 @@ def create_order():
     order = Order()
     order.deserialize(request.get_json())
     order.create()
+    location_url = url_for("read_orders", pet_id=order.id, _external=True)
     app.logger.info("Order with ID [%s] created.", order.id)
     return jsonify(order.serialize()), status.HTTP_201_CREATED
+
+######################################################################
+# READ AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>", methods=["GET"])
+def read_orders(order_id):
+    """
+    Read a single Order
+    This endpoint will return a Order based on it's id
+    """
+    app.logger.info("Request for order with id: %s", order_id)
+    order = Order.find(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -70,17 +86,4 @@ def check_content_type(content_type):
         f"Content-Type must be {content_type}",
     )
 
-######################################################################
-# READ AN ORDER
-######################################################################
-@app.route("/orders/<int:order_id>", methods=["GET"])
-def read_orders(order_id):
-    """
-    Read a single Order
-    This endpoint will return a Order based on it's id
-    """
-    app.logger.info("Request for order with id: %s", order_id)
-    order = Order.find(order_id)
-    if not order:
-        raise NotFound("Order with id '{}' was not found.".format(order_id))
-    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
