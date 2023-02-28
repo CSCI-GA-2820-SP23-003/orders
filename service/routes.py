@@ -59,7 +59,8 @@ def read_orders(order_id):
     app.logger.info("Request for order with id: %s", order_id)
     order = Order.find(order_id)
     if not order:
-        raise NotFound("Order with id '{}' was not found.".format(order_id))
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+    app.logger.info("Returning order: %s", order.id)
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
 

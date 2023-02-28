@@ -52,6 +52,20 @@ class TestOrderService(TestCase):
         db.session.remove()
         db.drop_all()
 
+    def _create_orders(self, count):
+        """Factory method to create orders in bulk"""
+        orders = []
+        for _ in range(count):
+            test_order = OrderFactory()
+            response = self.app.post(BASE_URL, json=test_order.serialize())
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED, "Could not create test order"
+            )
+            new_order = response.get_json()
+            test_order.id = new_order["id"]
+            orders.append(test_order)
+        return orders
+
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
@@ -115,6 +129,23 @@ class TestOrderService(TestCase):
         self.assertEqual(new_order["customer_id"], test_order.customer_id)
         self.assertEqual(new_order["status"], test_order.status.name)
         self.assertEqual(len(new_order["items"]), 0)
+
+    def test_read_order_with_order(self):
+        """It should Read a single Order"""
+        # get the id of a order
+        test_order = self._create_orders(1)[0]
+        response = self.app.get(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["id"], test_order.id)
+
+    def test_read_order_with_no_order(self):
+        """It should not Read a Pet thats not found"""
+        response = self.app.get(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("was not found", data["message"])
 
     ######################################################################
     #  T E S T   S A D   P A T H S
