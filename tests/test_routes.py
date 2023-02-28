@@ -124,3 +124,15 @@ class TestOrderService(TestCase):
         test_order["status"] = "created"  # wrong value
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_list_orders(self):
+        """ It should list orders"""
+        response = self.app.get("/orders")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 0)
+        self.app.post("/orders/foo")
+        response = self.app.get("/orders")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)

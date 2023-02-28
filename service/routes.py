@@ -48,6 +48,21 @@ def create_order():
 
 
 ######################################################################
+# List Orders
+######################################################################
+@app.route("/orders", methods=["GET"])
+def list_orders():
+    """List all orders in the database
+
+    Returns:
+        list: an array of order id
+    """
+    app.logger.info("Request to list all orders...")
+    orders = [order.serialize() for counter in Order.all()]
+    return jsonify(counters)
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
