@@ -29,3 +29,18 @@ def index():
 ######################################################################
 
 # Place your REST API code here ...
+
+######################################################################
+# READ AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>", methods=["GET"])
+def read_orders(order_id):
+    """
+    Read a single Order
+    This endpoint will return a Order based on it's id
+    """
+    app.logger.info("Request for order with id: %s", order_id)
+    order = Order.find(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
