@@ -179,12 +179,8 @@ class TestOrderService(TestCase):
 
     def test_list_orders(self):
         """ It should list orders"""
-        response = self.app.get("/orders")
+        self._create_orders(5)
+        response = self.app.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(len(data), 0)
-        self.app.post("/orders/foo")
-        response = self.app.get("/orders")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), 1)
+        self.assertEqual(len(data), 5)

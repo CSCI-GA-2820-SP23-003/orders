@@ -69,14 +69,11 @@ def get_order(order_id):
 ######################################################################
 @app.route("/orders", methods=["GET"])
 def list_orders():
-    """List all orders in the database
-
-    Returns:
-        list: an array of order id
-    """
-    app.logger.info("Request to list all orders...")
-    orders = [order.serialize() for counter in Order.all()]
-    return jsonify(counters)
+    """List all of the Orders"""
+    app.logger.info("Request for order list")
+    orders = Order.all()
+    results = [order.serialize() for order in orders]
+    return jsonify(results), status.HTTP_200_OK
 
 
 ######################################################################
