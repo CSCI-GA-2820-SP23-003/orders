@@ -8,7 +8,6 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
 from service import app
 from service.models import db, init_db
 from service.common import status  # HTTP Status Codes
@@ -116,7 +115,6 @@ class TestOrderService(TestCase):
         self.assertEqual(new_item["price"], test_item.price)
         self.assertEqual(new_item["order_id"], new_order["id"])
 
-
     def test_create_order_with_no_items(self):
         """It should Create a new Order"""
         test_order = OrderFactory()
@@ -148,6 +146,13 @@ class TestOrderService(TestCase):
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
 
+    def test_list_orders(self):
+        """ It should list orders"""
+        self._create_orders(5)
+        response = self.app.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 5)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
