@@ -4,7 +4,7 @@ My Service
 Describe what your service does here
 """
 
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import jsonify, request, url_for, make_response, abort
 from service.common import status  # HTTP Status Codes
 from service.models import Order
 
@@ -47,6 +47,7 @@ def create_order():
     app.logger.info("Order with ID [%s] created.", order.id)
     return jsonify(order.serialize()), status.HTTP_201_CREATED, {"Location": location_url}
 
+
 ######################################################################
 # GET AN ORDER
 ######################################################################
@@ -73,6 +74,7 @@ def list_orders():
     app.logger.info("Request for order list")
     orders = Order.all()
     results = [order.serialize() for order in orders]
+    app.logger.info("Returning %d orders", len(results))
     return jsonify(results), status.HTTP_200_OK
 
 
