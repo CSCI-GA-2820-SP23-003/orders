@@ -6,7 +6,7 @@ Describe what your service does here
 
 from flask import jsonify, request, url_for, make_response, abort
 from service.common import status  # HTTP Status Codes
-from service.models import Order
+from service.models import Order, OrderItem
 
 # Import Flask application
 from . import app
@@ -122,6 +122,40 @@ def delete_order(order_id):
         order.delete()
         app.logger.info("Order with ID [%s] delete complete.", order_id)
     return "", status.HTTP_204_NO_CONTENT
+
+
+######################################################################
+# ADD AN ITEM TO AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>/items", methods=["POST"])
+def create_items(order_id):
+    """
+    Create an item on an order
+    This endpoint will add an item to an order
+    """
+    app.logger.info("Request to create an Item for Order with id: %s", order_id)
+    check_content_type("application/json")
+
+    # See if the order exists and abort if it doesn't
+    order = Order.find(order_id)
+    if not order:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Order with id '{order_id}' could not be found.",
+        )
+
+    # Create an item from the json data
+    item = OrderItem()
+    item.deserialize(request.get_json())
+
+    # Append the item to the order
+    order.items.append(item)
+    order.update()
+
+    # Prepare a message to return
+    message = item.serialize()
+
+    return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 
 ######################################################################
