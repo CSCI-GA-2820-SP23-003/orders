@@ -129,7 +129,7 @@ class TestOrderService(TestCase):
         self.assertEqual(new_order["status"], test_order.status.name)
         self.assertEqual(len(new_order["items"]), 0)
 
-    def test_get_order_with_order(self):
+    def test_get_order(self):
         """It should Read a single Order"""
         # get the id of a order
         test_order = self._create_orders(1)[0]
@@ -138,12 +138,11 @@ class TestOrderService(TestCase):
         data = response.get_json()
         self.assertEqual(data["id"], test_order.id)
 
-    def test_get_order_with_no_order(self):
-        """It should not Read a Pet thats not found"""
+    def test_get_order_not_found(self):
+        """It should not Read an Order thats not found"""
         response = self.app.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
 
     def test_list_orders(self):
@@ -153,6 +152,56 @@ class TestOrderService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+
+    def test_update_order(self):
+        """It should Update an existing Order"""
+        # create an order to update
+        test_order = OrderFactory()
+        response = self.app.post(BASE_URL, json=test_order.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the order
+        new_order = response.get_json()
+        new_order["customer_id"] = 5
+        new_order["status"] = "DELIVERED"
+        response = self.app.put(f"{BASE_URL}/{new_order['id']}", json=new_order)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_order = response.get_json()
+        self.assertEqual(updated_order["customer_id"], 5)
+        self.assertEqual(updated_order["status"], "DELIVERED")
+
+    def test_update_order_with_items(self):
+        """It should not Update items of an existing Order"""
+        # create an order to update
+        test_order = OrderFactory()
+        test_item = OrderItemFactory()
+        test_order.items = [test_item]
+        response = self.app.post(
+            BASE_URL, json=test_order.serialize(), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the order
+        new_order = response.get_json()
+        new_order["customer_id"] = 5
+        original_product_id = new_order["items"][0]["product_id"]
+        new_order["items"][0]["product_id"] = original_product_id * 2
+
+        response = self.app.put(f"{BASE_URL}/{new_order['id']}", json=new_order)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_order = response.get_json()
+        self.assertEqual(updated_order["customer_id"], 5)
+        self.assertEqual(len(updated_order["items"]), 1)
+        item_data = updated_order["items"][0]
+        self.assertNotEqual(item_data["product_id"], original_product_id * 2)
+        self.assertEqual(item_data["product_id"], original_product_id)
+
+    def test_update_nonexistent_order(self):
+        """It should not Update a nonexisting Order"""
+        test_order = OrderFactory()
+        response = self.app.put(f"{BASE_URL}/{test_order.id}", json=test_order.serialize())
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        self.assertEqual(data["message"], f"404 Not Found: Order with id '{test_order.id}' was not found.")
 
     ######################################################################
     #  T E S T   S A D   P A T H S
