@@ -203,6 +203,16 @@ class TestOrderService(TestCase):
         data = response.get_json()
         self.assertEqual(data["message"], f"404 Not Found: Order with id '{test_order.id}' was not found.")
 
+    def test_delete_order(self):
+        """It should Delete an Order"""
+        test_order = self._create_orders(1)[0]
+        response = self.app.delete(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response.data), 0)
+        # make sure the order is deleted
+        response = self.app.get(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     ######################################################################
     #  T E S T   S A D   P A T H S
     ######################################################################
