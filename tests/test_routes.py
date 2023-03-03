@@ -256,7 +256,6 @@ class TestOrderService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         data = resp.get_json()
-        logging.debug(data)
         self.assertIsNotNone(data["id"])
         self.assertEqual(data["order_id"], order.id)
         self.assertEqual(data["product_id"], item.product_id)
