@@ -139,8 +139,8 @@ class Order(db.Model):
                 self.status = getattr(OrderStatus, data["status"])
             else:
                 self.status = OrderStatus.CONFIRMED
-            self.items = []
             if "items" in data:
+                self.items = []
                 for item in data["items"]:
                     self.items.append(OrderItem().deserialize(item))
             self.updated_on = date.today()

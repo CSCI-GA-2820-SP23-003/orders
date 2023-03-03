@@ -21,6 +21,7 @@ DATABASE_URI = os.getenv(
 
 
 class TestOrderModel(unittest.TestCase):
+    # pylint: disable=too-many-public-methods
     """ Test Cases for Order Model """
 
     @classmethod

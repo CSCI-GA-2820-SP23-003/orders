@@ -66,7 +66,7 @@ def get_order(order_id):
 
 
 ######################################################################
-# List Orders
+# LIST ALL ORDERS
 ######################################################################
 @app.route("/orders", methods=["GET"])
 def list_orders():
@@ -76,6 +76,34 @@ def list_orders():
     results = [order.serialize() for order in orders]
     app.logger.info("Returning %d orders", len(results))
     return jsonify(results), status.HTTP_200_OK
+
+
+######################################################################
+# UPDATE AN EXISTING ORDER
+######################################################################
+@app.route("/orders/<int:order_id>", methods=["PUT"])
+def update_order(order_id):
+    """
+    Update an Order
+
+    This endpoint will update an Order based on the body that is posted
+    """
+    app.logger.info("Request to update order with id: %s", order_id)
+    check_content_type("application/json")
+
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+
+    data = request.get_json()
+    if "items" in data:
+        del data["items"]
+    order.deserialize(data)
+    order.id = order_id
+    order.update()
+
+    app.logger.info("Order with ID [%s] updated.", order.id)
+    return jsonify(order.serialize()), status.HTTP_200_OK
 
 
 ######################################################################
