@@ -66,7 +66,7 @@ class TestOrderService(TestCase):
         return orders
 
     ######################################################################
-    #  P L A C E   T E S T   C A S E S   H E R E
+    #  ORDER - P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
 
     def test_index(self):
@@ -214,7 +214,7 @@ class TestOrderService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
-    #  T E S T   S A D   P A T H S
+    #  ORDER - T E S T   S A D   P A T H S
     ######################################################################
 
     def test_create_order_no_data(self):
@@ -240,3 +240,39 @@ class TestOrderService(TestCase):
         test_order["status"] = "created"  # wrong value
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    ######################################################################
+    #  ITEM - P L A C E   T E S T   C A S E S   H E R E
+    ######################################################################
+
+    def test_add_item(self):
+        """It should Add an item to an order"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        self.assertIsNotNone(data["id"])
+        self.assertEqual(data["order_id"], order.id)
+        self.assertEqual(data["product_id"], item.product_id)
+        self.assertEqual(data["quantity"], item.quantity)
+        self.assertEqual(data["price"], item.price)
+
+    ######################################################################
+    #  ITEM - T E S T   S A D   P A T H S
+    ######################################################################
+
+    def test_add_item_no_order(self):
+        """It should not Create a item when order can't be find"""
+        order_id = 5
+        item = OrderItemFactory()
+        resp = self.app.post(
+            f"{BASE_URL}/{order_id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
