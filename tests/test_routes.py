@@ -260,11 +260,9 @@ class TestOrderService(TestCase):
             f"{BASE_URL}/{order.id}/items", json=item_list[1].serialize(), content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-
         # get the list back and make sure there are 2
         resp = self.app.get(f"{BASE_URL}/{order.id}/items", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-
         data = resp.get_json()
         self.assertEqual(len(data), 2)
 
