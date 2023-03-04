@@ -177,6 +177,38 @@ def list_items(order_id):
 
 
 ######################################################################
+# READ AN ITEM FROM AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["GET"])
+def get_item(order_id, item_id):
+    """
+    Read an item from an order
+    """
+    app.logger.info("Request to read an Item %s from Order with id: %s", item_id, order_id)
+    
+    # See if the order exists and abort if it doesn't
+    order = Order.find(order_id)
+    if not order:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Order with id '{order_id}' could not be found.",
+        )
+
+    # Read an item with item_id
+    result = OrderItem.find(item_id)
+    if not result:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Item with id '{item_id}' could not be found.",
+        )
+        
+    # Prepare a message to return
+    message = result.serialize()
+    return make_response(jsonify(message), status.HTTP_200_OK)
+
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
