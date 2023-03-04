@@ -185,7 +185,7 @@ def get_item(order_id, item_id):
     Read an item from an order
     """
     app.logger.info("Request to read an Item %s from Order with id: %s", item_id, order_id)
-    check_content_type("application/json")
+
     
     # See if the order exists and abort if it doesn't
     order = Order.find(order_id)
@@ -197,6 +197,11 @@ def get_item(order_id, item_id):
 
     # Read an item with item_id
     result = OrderItem.find(item_id)
+    if not result:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Item with id '{item_id}' could not be found.",
+        )
     # Prepare a message to return
     message = result.serialize()
     return make_response(jsonify(message), status.HTTP_200_OK)
