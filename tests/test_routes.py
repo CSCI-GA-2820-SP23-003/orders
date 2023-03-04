@@ -306,3 +306,21 @@ class TestOrderService(TestCase):
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_item_item_not_found(self):
+        """
+        When there is an order but no such item.
+        It should not Read an item thats not found
+        """
+        order = self._create_orders(1)[0]
+        print(order.id)
+        resp = self.app.get(f"{BASE_URL}/{order.id}/items/0")
+        print(resp.status_code)
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_get_item_order_not_found(self):
+        """
+        It should not Read an item when the order is not found
+        """
+        resp = self.app.get(f"{BASE_URL}/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
