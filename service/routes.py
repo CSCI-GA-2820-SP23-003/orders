@@ -171,8 +171,7 @@ def list_items(order_id):
     if not order:
         abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
     # Create an item from the json data
-    items = OrderItem().all()
-    results = [item.serialize() for item in items]
+    results = [item.serialize() for item in order.items]
     app.logger.info("Returning %d items", len(results))
     return jsonify(results), status.HTTP_200_OK
 
