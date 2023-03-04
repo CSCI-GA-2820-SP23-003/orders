@@ -244,7 +244,35 @@ class TestOrderService(TestCase):
     ######################################################################
     #  ITEM - P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
+    def test_get_items_list(self):
+        """It should Get a list of Items"""
+        order = self._create_orders(1)[0]
+        item_list = OrderItemFactory.create_batch(2)
 
+        # Create item 1
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items", json=item_list[0].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 2
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items", json=item_list[1].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # get the list back and make sure there are 2
+        resp = self.app.get(f"{BASE_URL}/{order.id}/items", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 2)
+
+    def test_get_items_list_no_order_id(self):
+        """It should not Get a list of Items thats not found"""
+        response = self.app.get(f"{BASE_URL}/0/items", content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        self.assertIn("was not found", data["message"])
+       
     def test_add_item(self):
         """It should Add an item to an order"""
         order = self._create_orders(1)[0]

@@ -157,6 +157,24 @@ def create_items(order_id):
 
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
+######################################################################
+# LIST ALL ITEMS FROM AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>/items", methods=["GET"])
+def list_items(order_id):
+    """List all of the Items from Order"""
+    app.logger.info("Request to list Items for Order with id: %s", order_id)
+    check_content_type("application/json")
+
+    # See if the order exists and abort if it doesn't
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+    # Create an item from the json data
+    results = [item.serialize() for item in order.items]
+    app.logger.info("Returning %d items", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
