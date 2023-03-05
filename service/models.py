@@ -356,3 +356,23 @@ class OrderItem(db.Model):
         """
         logger.info("Processing lookup or 404 for item id %s ...", item_id)
         return cls.query.get_or_404(item_id)
+
+    @classmethod
+    def find_by_order_and_item_id(cls, order_id: int, item_id: int):
+        """Finds an Item by Order ID and Item ID
+
+        :param order_id: the id of the Order to find
+        :type order_id: int
+        :param item_id: the id of the Item to find
+        :type item_id: int
+
+        :return: an instance with the order_id and item_id, or None if not found
+        :return type: OrderItem
+
+        """
+        logger.info(
+            "Processing lookup for order id %s and item id %s...", order_id, item_id)
+        item = cls.query.get(item_id)
+        if item and item.order_id == order_id:
+            return item
+        return None
