@@ -24,6 +24,7 @@ BASE_URL = "/orders"
 
 
 class TestOrderService(TestCase):
+    # pylint: disable=too-many-public-methods
     """ REST API Server Tests """
 
     @classmethod
@@ -66,7 +67,7 @@ class TestOrderService(TestCase):
         return orders
 
     ######################################################################
-    #  ORDER - P L A C E   T E S T   C A S E S   H E R E
+    #  O R D E R  -  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
 
     def test_index(self):
@@ -214,7 +215,7 @@ class TestOrderService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
-    #  ORDER - T E S T   S A D   P A T H S
+    #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
 
     def test_create_order_no_data(self):
@@ -242,7 +243,7 @@ class TestOrderService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     ######################################################################
-    #  ITEM - P L A C E   T E S T   C A S E S   H E R E
+    #  I T E M  -  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
     def test_get_items_list(self):
         """It should Get a list of Items"""
@@ -272,7 +273,7 @@ class TestOrderService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         self.assertIn("was not found", data["message"])
-       
+
     def test_add_item(self):
         """It should Add an item to an order"""
         order = self._create_orders(1)[0]
@@ -319,9 +320,84 @@ class TestOrderService(TestCase):
         self.assertEqual(data["quantity"], item.quantity)
         self.assertEqual(data["price"], item.price)
 
-    
+    def test_delete_item(self):
+        """It should Delete an item from an order"""
+        # create an item
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        response = self.app.post(
+            f"{BASE_URL}/{order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        item_id = data["id"]
+
+        # make sure item exists before delete
+        response = self.app.get(f"{BASE_URL}/{order.id}/items/{item_id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # delete the item
+        response = self.app.delete(f"{BASE_URL}/{order.id}/items/{item_id}",)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # make sure item does not exist after delete
+        response = self.app.get(f"{BASE_URL}/{order.id}/items/{item_id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_item_nonexistent_order(self):
+        """It should not delete a item when order can't be find"""
+        order_id = 5
+        item_id = 5
+        response = self.app.delete(f"{BASE_URL}/{order_id}/items/{item_id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        self.assertEqual(data["message"], f"404 Not Found: Order with id '{order_id}' was not found.")
+
+    def test_delete_item_incorrect_order(self):
+        """It should not delete a item when item with order id can't be find"""
+        orders = self._create_orders(2)
+
+        item_0 = OrderItemFactory()
+        response = self.app.post(
+            f"{BASE_URL}/{orders[0].id}/items",
+            json=item_0.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        item_id_order_0 = response.get_json()["id"]
+
+        item_1 = OrderItemFactory()
+        response = self.app.post(
+            f"{BASE_URL}/{orders[1].id}/items",
+            json=item_1.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        item_id_order_1 = response.get_json()["id"]
+
+        # make sure item exists before delete
+        response = self.app.get(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_0}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.app.get(f"{BASE_URL}/{orders[1].id}/items/{item_id_order_1}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # delete the item belong to incorrect order
+        response = self.app.delete(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_1}",)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # make sure both the items still exist
+        response = self.app.get(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_0}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.app.get(f"{BASE_URL}/{orders[1].id}/items/{item_id_order_1}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     ######################################################################
-    #  ITEM - T E S T   S A D   P A T H S
+    #  I T E M  -  T E S T   S A D   P A T H S
     ######################################################################
 
     def test_add_item_no_order(self):
@@ -343,7 +419,7 @@ class TestOrderService(TestCase):
         order = self._create_orders(1)[0]
         resp = self.app.get(f"{BASE_URL}/{order.id}/items/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_get_item_order_not_found(self):
         """
         It should not Read an item when the order is not found

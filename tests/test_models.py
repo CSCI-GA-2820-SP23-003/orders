@@ -347,6 +347,7 @@ class TestOrderModel(unittest.TestCase):
 
 
 class TestOrderItemModel(unittest.TestCase):
+    # pylint: disable=too-many-public-methods
     """ Test Cases for Order Item Model """
 
     @classmethod
@@ -599,3 +600,40 @@ class TestOrderItemModel(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """It should return 404 not found"""
         self.assertRaises(NotFound, OrderItem.find_or_404, 0)
+
+    def test_find_order_item_by_order_id(self):
+        """It should Find an Order Item by ID and Order id"""
+        order = OrderFactory()
+        order.create()
+        items = OrderItemFactory.create_batch(5)
+        for item in items:
+            item.order_id = order.id
+            item.create()
+        # make sure they got saved
+        self.assertEqual(len(OrderItem.all()), 5)
+
+        # find the 2nd order item in the list
+        item = OrderItem.find_by_order_and_item_id(order.id, items[1].id)
+        self.assertIsNot(item, None)
+        self.assertEqual(item.id, items[1].id)
+        self.assertEqual(item.product_id, items[1].product_id)
+        self.assertEqual(item.quantity, items[1].quantity)
+        self.assertEqual(item.price, items[1].price)
+        self.assertEqual(item.order_id, items[1].order_id)
+        self.assertEqual(item.created_on, items[1].created_on)
+        self.assertEqual(item.updated_on, items[1].updated_on)
+
+    def test_find_order_item_by_nonexistent_order_id(self):
+        """It should not Find an Order Item by ID and Order id"""
+        order = OrderFactory()
+        order.create()
+        items = OrderItemFactory.create_batch(5)
+        for item in items:
+            item.order_id = order.id
+            item.create()
+        # make sure they got saved
+        self.assertEqual(len(OrderItem.all()), 5)
+
+        # find the 2nd order item in the list, but pass wrong order id
+        item = OrderItem.find_by_order_and_item_id(order.id * 2, items[1].id)
+        self.assertIsNone(item)

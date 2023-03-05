@@ -145,7 +145,7 @@ def create_items(order_id):
     if not order:
         abort(
             status.HTTP_404_NOT_FOUND,
-            f"Order with id '{order_id}' could not be found.",
+            f"Order with id '{order_id}' was not found.",
         )
 
     # Create an item from the json data
@@ -160,6 +160,7 @@ def create_items(order_id):
     message = item.serialize()
 
     return make_response(jsonify(message), status.HTTP_201_CREATED)
+
 
 ######################################################################
 # LIST ALL ITEMS FROM AN ORDER
@@ -189,13 +190,13 @@ def get_item(order_id, item_id):
     Read an item from an order
     """
     app.logger.info("Request to read an Item %s from Order with id: %s", item_id, order_id)
-    
+
     # See if the order exists and abort if it doesn't
     order = Order.find(order_id)
     if not order:
         abort(
             status.HTTP_404_NOT_FOUND,
-            f"Order with id '{order_id}' could not be found.",
+            f"Order with id '{order_id}' was not found.",
         )
 
     # Read an item with item_id
@@ -203,19 +204,43 @@ def get_item(order_id, item_id):
     if not result:
         abort(
             status.HTTP_404_NOT_FOUND,
-            f"Item with id '{item_id}' could not be found.",
+            f"Item with id '{item_id}' was not found.",
         )
-        
+
     # Prepare a message to return
     message = result.serialize()
     return make_response(jsonify(message), status.HTTP_200_OK)
 
 
+######################################################################
+# DELETE AN ITEM FROM AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["DELETE"])
+def delete_item(order_id, item_id):
+    """
+    Delete an item from an order
+    """
+    app.logger.info(
+        "Request to delete an Item %s from Order with id: %s", item_id, order_id)
+
+    order = Order.find(order_id)
+    if not order:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Order with id '{order_id}' was not found.",
+        )
+
+    item = OrderItem.find_by_order_and_item_id(order_id, item_id)
+    if item:
+        item.delete()
+        app.logger.info(
+                "Item with ID [%s] and order ID [%s] delete complete.", item_id, order_id)
+    return "", status.HTTP_204_NO_CONTENT
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
 
 def check_content_type(content_type):
     """Checks that the media type is correct"""
