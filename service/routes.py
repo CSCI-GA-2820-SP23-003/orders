@@ -20,7 +20,7 @@ def index():
     """ Root URL response """
     return (
         jsonify(
-            name="Orders system REST API Service",
+            name="Order REST API Service",
             version="1.0",
             paths=url_for("list_orders", _external=True),
         ),
