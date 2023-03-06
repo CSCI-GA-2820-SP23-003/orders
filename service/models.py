@@ -132,8 +132,6 @@ class Order(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            if "id" in data:
-                self.id = data["id"]
             self.customer_id = data["customer_id"]
             if "status" in data:
                 self.status = getattr(OrderStatus, data["status"])
@@ -285,13 +283,9 @@ class OrderItem(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            if "id" in data:
-                self.id = data["id"]
             self.product_id = data["product_id"]
             self.quantity = data["quantity"]
             self.price = data["price"]
-            if "order_id" in data:
-                self.order_id = data["order_id"]
             self.updated_on = date.today()
         except KeyError as error:
             raise DataValidationError(
