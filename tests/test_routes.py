@@ -440,6 +440,59 @@ class TestOrderService(TestCase):
 
         response = self.app.get(f"{BASE_URL}/{orders[1].id}/items/{item_id_order_1}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_update_item(self):
+        """It should Update an item"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        
+        # add item
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        data = resp.get_json()
+        item.id = data["id"]
+        self.assertIsNotNone(data["id"])
+        self.assertEqual(data["order_id"], order.id)
+        self.assertEqual(data["product_id"], item.product_id)
+        self.assertEqual(data["quantity"], item.quantity)
+        self.assertEqual(data["price"], item.price)
+
+        # update item order id
+        updated_item = OrderItemFactory()
+        updated_item.order_id = item.order_id
+        updated_item.id = item.id
+        resp = self.app.put(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            json=updated_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        resp_item = resp.get_json()
+        self.assertIsNotNone(resp_item["id"], item.id)
+        self.assertEqual(resp_item["order_id"], order.id)
+        self.assertEqual(resp_item["product_id"], updated_item.product_id)
+        self.assertEqual(resp_item["quantity"], updated_item.quantity)
+        self.assertEqual(resp_item["price"], updated_item.price)
+
+        # make sure item updated using get
+        resp = self.app.get(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        resp_item = resp.get_json()
+        self.assertIsNotNone(resp_item["id"], item.id)
+        self.assertEqual(resp_item["order_id"], order.id)
+        self.assertEqual(resp_item["product_id"], updated_item.product_id)
+        self.assertEqual(resp_item["quantity"], updated_item.quantity)
+        self.assertEqual(resp_item["price"], updated_item.price)
 
     ######################################################################
     #  I T E M  -  T E S T   S A D   P A T H S
@@ -471,3 +524,119 @@ class TestOrderService(TestCase):
         """
         resp = self.app.get(f"{BASE_URL}/0/items/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_item_not_found(self):
+        """It should not Update an item given wrong order id and non-existent item"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        item.order_id = order.id
+
+        # add item
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        item.id = data["id"]
+        self.assertIsNotNone(data["id"])
+        self.assertEqual(data["order_id"], order.id)
+        self.assertEqual(data["product_id"], item.product_id)
+        self.assertEqual(data["quantity"], item.quantity)
+        self.assertEqual(data["price"], item.price)
+
+        # update non-existent item id
+        updated_item = OrderItemFactory()
+        updated_item.order_id = item.order_id
+        updated_item.id = item.id + 123
+        resp = self.app.put(
+            f"{BASE_URL}/{order.id}/items/{updated_item.id}",
+            json=updated_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        self.assertEqual(data["message"], f"404 Not Found: Item with id '{updated_item.id}' was not found with order id '{updated_item.order_id}'.")
+
+        # update item with wrong order id
+        updated_item = OrderItemFactory()
+        updated_item.order_id = item.order_id + 123
+        updated_item.id = item.id
+        resp = self.app.put(
+            f"{BASE_URL}/{updated_item.order_id}/items/{updated_item.id}",
+            json=updated_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        self.assertEqual(data["message"], f"404 Not Found: Order with id '{updated_item.order_id}' was not found.")
+
+    def test_update_item_changed_id(self):
+        """It should not Update an item's order id and item id"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+
+        # add item
+        resp = self.app.post(
+            f"{BASE_URL}/{order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        item.id = data["id"]
+        self.assertIsNotNone(data["id"])
+        self.assertEqual(data["order_id"], order.id)
+        self.assertEqual(data["product_id"], item.product_id)
+        self.assertEqual(data["quantity"], item.quantity)
+        self.assertEqual(data["price"], item.price)
+
+        # update item order id
+        updated_item = OrderItemFactory()
+        updated_item.order_id = item.order_id + 1
+        resp = self.app.put(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            json=updated_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        # make sure item NOT updated using get
+        resp = self.app.get(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        resp_item = resp.get_json()
+        self.assertIsNotNone(resp_item["id"], item.id)
+        self.assertEqual(resp_item["order_id"], order.id)
+        self.assertEqual(resp_item["product_id"], updated_item.product_id)
+        self.assertEqual(resp_item["quantity"], updated_item.quantity)
+        self.assertEqual(resp_item["price"], updated_item.price)
+        
+        # update item item id
+        updated_item = OrderItemFactory()
+        updated_item.id = item.id + 1
+        resp = self.app.put(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            json=updated_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        # make sure item NOT updated using get
+        resp = self.app.get(
+            f"{BASE_URL}/{order.id}/items/{item.id}",
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        resp_item = resp.get_json()
+        self.assertIsNotNone(resp_item["id"], item.id)
+        self.assertEqual(resp_item["order_id"], order.id)
+        self.assertEqual(resp_item["product_id"], updated_item.product_id)
+        self.assertEqual(resp_item["quantity"], updated_item.quantity)
+        self.assertEqual(resp_item["price"], updated_item.price)
+        
