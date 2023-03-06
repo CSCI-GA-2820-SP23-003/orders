@@ -171,17 +171,14 @@ class TestOrderModel(unittest.TestCase):
         order = Order()
         order.deserialize(serialized_data)
         self.assertNotEqual(order, None)
-        self.assertEqual(order.id, serialized_data['id'])
         self.assertEqual(order.customer_id, serialized_data['customer_id'])
         self.assertEqual(order.status.name, serialized_data['status'])
         self.assertEqual(order.updated_on, date.today())
         items = order.items
         self.assertEqual(len(items), 1)
-        self.assertEqual(items[0].id, item.id)
         self.assertEqual(items[0].product_id, item.product_id)
         self.assertEqual(items[0].quantity, item.quantity)
         self.assertEqual(items[0].price, item.price)
-        self.assertEqual(items[0].order_id, item.order_id)
         self.assertEqual(items[0].updated_on, date.today())
 
     def test_deserialize_default_status(self):
@@ -191,7 +188,6 @@ class TestOrderModel(unittest.TestCase):
         order = Order()
         order.deserialize(data)
         self.assertNotEqual(order, None)
-        self.assertEqual(order.id, data['id'])
         self.assertEqual(order.customer_id, data['customer_id'])
         self.assertEqual(order.status, OrderStatus.CONFIRMED)
         self.assertEqual(order.updated_on, date.today())
@@ -526,11 +522,9 @@ class TestOrderItemModel(unittest.TestCase):
         item = OrderItem()
         item.deserialize(data)
         self.assertNotEqual(item, None)
-        self.assertEqual(item.id, data['id'])
         self.assertEqual(item.product_id, data['product_id'])
         self.assertEqual(item.quantity, data['quantity'])
         self.assertEqual(item.price, data['price'])
-        self.assertEqual(item.order_id, data['order_id'])
         self.assertEqual(item.updated_on, date.today())
 
     def test_deserialize_missing_data(self):

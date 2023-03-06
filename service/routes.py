@@ -132,7 +132,7 @@ def delete_order(order_id):
 # ADD AN ITEM TO AN ORDER
 ######################################################################
 @app.route("/orders/<int:order_id>/items", methods=["POST"])
-def create_items(order_id):
+def create_item(order_id):
     """
     Create an item on an order
     This endpoint will add an item to an order
@@ -237,6 +237,7 @@ def delete_item(order_id, item_id):
                 "Item with ID [%s] and order ID [%s] delete complete.", item_id, order_id)
     return "", status.HTTP_204_NO_CONTENT
 
+
 ######################################################################
 # UPDATE AN ITEM FROM AN ORDER
 ######################################################################
@@ -246,7 +247,7 @@ def update_item(order_id, item_id):
     Update an item from an order
     """
     app.logger.info("Request to update an Item %s from Order with id: %s", item_id, order_id)
-    
+
     # See if the order exists and abort if it doesn't
     order = Order.find(order_id)
     if not order:
@@ -260,9 +261,9 @@ def update_item(order_id, item_id):
     if not item:
         abort(
             status.HTTP_404_NOT_FOUND,
-            f"Item with id '{item_id}' was not found with order id '{order_id}'.",
+            f"Item with id '{item_id}' was not found.",
         )
-        
+
     data = request.get_json()
     item.deserialize(data)
     item.id = item_id
