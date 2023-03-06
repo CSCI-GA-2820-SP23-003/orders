@@ -320,6 +320,51 @@ class TestOrderService(TestCase):
         self.assertEqual(data["quantity"], item.quantity)
         self.assertEqual(data["price"], item.price)
 
+    def test_get_item_incorrect_order(self):
+        """It should not Get an item by id if order id is incorrect"""
+        # create an item
+        orders = self._create_orders(2)
+
+        item_0 = OrderItemFactory()
+        response = self.app.post(
+            f"{BASE_URL}/{orders[0].id}/items",
+            json=item_0.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        item_id_order_0 = response.get_json()["id"]
+
+        item_1 = OrderItemFactory()
+        response = self.app.post(
+            f"{BASE_URL}/{orders[1].id}/items",
+            json=item_1.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        item_id_order_1 = response.get_json()["id"]
+
+        # retrieve the items with wrong order id
+        response = self.app.get(
+            f"{BASE_URL}/{orders[0].id}/items/{item_id_order_1}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.get_json()["message"], f"404 Not Found: Item with id '{item_id_order_1}' was not found.")
+        
+        response = self.app.get(
+            f"{BASE_URL}/{orders[1].id}/items/{item_id_order_0}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.get_json()["message"], f"404 Not Found: Item with id '{item_id_order_0}' was not found.")
+
+        # Now retrieve them with correct order id
+        response = self.app.get(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_0}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.app.get(f"{BASE_URL}/{orders[1].id}/items/{item_id_order_1}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_delete_item(self):
         """It should Delete an item from an order"""
         # create an item
@@ -357,7 +402,7 @@ class TestOrderService(TestCase):
         self.assertEqual(data["message"], f"404 Not Found: Order with id '{order_id}' was not found.")
 
     def test_delete_item_incorrect_order(self):
-        """It should not delete a item when item with order id can't be find"""
+        """It should not delete a item when item with order id can't be found"""
         orders = self._create_orders(2)
 
         item_0 = OrderItemFactory()
