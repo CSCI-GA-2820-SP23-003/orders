@@ -182,12 +182,12 @@ def list_items(order_id):
 
 
 ######################################################################
-# READ AN ITEM FROM AN ORDER
+# RETRIEVE AN ITEM FROM AN ORDER
 ######################################################################
 @app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["GET"])
 def get_item(order_id, item_id):
     """
-    Read an item from an order
+    Retrieve an item from an order
     """
     app.logger.info("Request to read an Item %s from Order with id: %s", item_id, order_id)
 
@@ -200,7 +200,7 @@ def get_item(order_id, item_id):
         )
 
     # Read an item with item_id
-    result = OrderItem.find(item_id)
+    result = OrderItem.find_by_order_and_item_id(order_id, item_id)
     if not result:
         abort(
             status.HTTP_404_NOT_FOUND,
