@@ -237,6 +237,41 @@ def delete_item(order_id, item_id):
                 "Item with ID [%s] and order ID [%s] delete complete.", item_id, order_id)
     return "", status.HTTP_204_NO_CONTENT
 
+######################################################################
+# UPDATE AN ITEM FROM AN ORDER
+######################################################################
+@app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["PUT"])
+def update_item(order_id, item_id):
+    """
+    Update an item from an order
+    """
+    app.logger.info("Request to update an Item %s from Order with id: %s", item_id, order_id)
+    
+    # See if the order exists and abort if it doesn't
+    order = Order.find(order_id)
+    if not order:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Order with id '{order_id}' was not found.",
+        )
+
+    # Read an item with item_id
+    item = OrderItem.find_by_order_and_item_id(order_id, item_id)
+    if not item:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Item with id '{item_id}' was not found with order id '{order_id}'.",
+        )
+        
+    data = request.get_json()
+    item.deserialize(data)
+    item.id = item_id
+    item.order_id = order_id
+    item.update()
+    # Prepare a message to return
+    message = item.serialize()
+    return make_response(jsonify(message), status.HTTP_200_OK)
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
