@@ -233,6 +233,11 @@ class TestOrderService(TestCase):
         response = self.app.post(BASE_URL, json={}, content_type="application/xml")
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    def test_method_not_allowed(self):
+        """It should not allow an illegal method call"""
+        resp = self.app.put(BASE_URL, json={"not": "today"})
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def test_create_order_bad_status(self):
         """It should not Create an Order with bad status data"""
         order = OrderFactory()
