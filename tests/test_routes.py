@@ -279,17 +279,32 @@ class TestOrderService(TestCase):
         data = response.get_json()
         self.assertIn("was not found", data["message"])
 
-    def test_add_item(self):
+    def test_create_item(self):
         """It should Add an item to an order"""
         order = self._create_orders(1)[0]
         item = OrderItemFactory()
-        resp = self.app.post(
+        response = self.app.post(
             f"{BASE_URL}/{order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        data = resp.get_json()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        data = response.get_json()
+        self.assertIsNotNone(data["id"])
+        self.assertEqual(data["order_id"], order.id)
+        self.assertEqual(data["product_id"], item.product_id)
+        self.assertEqual(data["quantity"], item.quantity)
+        self.assertEqual(data["price"], item.price)
+
+        # Check that the location header was correct
+        response = self.app.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
         self.assertIsNotNone(data["id"])
         self.assertEqual(data["order_id"], order.id)
         self.assertEqual(data["product_id"], item.product_id)

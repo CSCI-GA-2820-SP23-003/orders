@@ -49,7 +49,7 @@ def create_order():
     order.create()
     location_url = url_for("get_order", order_id=order.id, _external=True)
     app.logger.info("Order with ID [%s] created.", order.id)
-    return jsonify(order.serialize()), status.HTTP_201_CREATED, {"Location": location_url}
+    return make_response(jsonify(order.serialize()), status.HTTP_201_CREATED, {"Location": location_url})
 
 
 ######################################################################
@@ -79,7 +79,7 @@ def list_orders():
     orders = Order.all()
     results = [order.serialize() for order in orders]
     app.logger.info("Returning %d orders", len(results))
-    return jsonify(results), status.HTTP_200_OK
+    return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -107,7 +107,7 @@ def update_order(order_id):
     order.update()
 
     app.logger.info("Order with ID [%s] updated.", order.id)
-    return jsonify(order.serialize()), status.HTTP_200_OK
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -125,7 +125,7 @@ def delete_order(order_id):
     if order:
         order.delete()
         app.logger.info("Order with ID [%s] delete complete.", order_id)
-    return "", status.HTTP_204_NO_CONTENT
+    return make_response("", status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################
@@ -158,8 +158,9 @@ def create_item(order_id):
 
     # Prepare a message to return
     message = item.serialize()
+    location_url = url_for("get_item", order_id=order_id, item_id=item.id, _external=True)
 
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    return make_response(jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
 
 ######################################################################
@@ -177,7 +178,7 @@ def list_items(order_id):
     # Create an item from the json data
     results = [item.serialize() for item in order.items]
     app.logger.info("Returning %d items", len(results))
-    return jsonify(results), status.HTTP_200_OK
+    return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -234,7 +235,7 @@ def delete_item(order_id, item_id):
         item.delete()
         app.logger.info(
                 "Item with ID [%s] and order ID [%s] delete complete.", item_id, order_id)
-    return "", status.HTTP_204_NO_CONTENT
+    return make_response("", status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################
