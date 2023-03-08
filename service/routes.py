@@ -169,7 +169,6 @@ def create_item(order_id):
 def list_items(order_id):
     """List all of the Items from Order"""
     app.logger.info("Request to list Items for Order with id: %s", order_id)
-    check_content_type("application/json")
 
     # See if the order exists and abort if it doesn't
     order = Order.find(order_id)
@@ -247,6 +246,7 @@ def update_item(order_id, item_id):
     Update an item from an order
     """
     app.logger.info("Request to update an Item %s from Order with id: %s", item_id, order_id)
+    check_content_type("application/json")
 
     # See if the order exists and abort if it doesn't
     order = Order.find(order_id)
