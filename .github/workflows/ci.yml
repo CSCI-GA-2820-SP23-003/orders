@@ -38,7 +38,7 @@ jobs:
       - name: Install libraries for PostgreSQL
         run: |
           apt-get update
-          apt-get install -y gcc libpq-dev
+          apt-get install -y gcc libpq-dev make
       - name: Install dependencies
         run: make install
           # python -m pip install --upgrade pip wheel
