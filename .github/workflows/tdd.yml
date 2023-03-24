@@ -51,3 +51,5 @@ jobs:
           nosetests
         env:
           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/testdb"
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v3.1.1
