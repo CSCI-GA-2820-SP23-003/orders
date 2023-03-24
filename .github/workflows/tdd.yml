@@ -50,4 +50,4 @@ jobs:
           export FLASK_APP=service:app
           nosetests
         env:
-          DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
+          DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/testdb"
