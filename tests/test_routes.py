@@ -10,7 +10,7 @@ import logging
 from urllib.parse import quote_plus
 from unittest import TestCase
 from service import app
-from service.models import db, init_db
+from service.models import db, init_db, OrderStatus
 from service.common import status  # HTTP Status Codes
 from tests.factories import OrderFactory, OrderItemFactory
 
@@ -284,6 +284,28 @@ class TestOrderService(TestCase):
         for order in data:
             self.assertEqual(order["items"][0]["product_id"], test_product_id)
 
+    def test_cancel_order(self):
+        """Cancelling order"""
+        # test cancel received order
+        received_order = OrderFactory()
+        received_order.status = OrderStatus.CONFIRMED  # change status to confirmed
+        resp = self.app.post(
+            BASE_URL, json=received_order.serialize(), content_type="application/json"
+        )
+        data = resp.get_json()
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data["status"], OrderStatus.CONFIRMED.name)
+        logging.debug(received_order)
+        # try cancelling a received order
+        received_order.id = data["id"]
+        resp = self.app.put(f"{BASE_URL}/{received_order.id}/cancel")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        # try get the order back and check for status
+        resp = self.app.get(f"{BASE_URL}/{received_order.id}")
+        data = resp.get_json()
+        logging.debug(received_order)
+        self.assertEqual(data['status'], OrderStatus.CANCELLED.name)
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
@@ -323,6 +345,11 @@ class TestOrderService(TestCase):
         response = self.app.get(BASE_URL, query_string=f"status={quote_plus(bad_status)}")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.get_json()["message"], f"400 Bad Request: Invalid status '{bad_status}'.")
+
+    def test_cancel_order_not_found(self):
+        """Cancelling order not exists"""
+        resp = self.app.put(f"{BASE_URL}/1/cancel")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
     #  I T E M  -  P L A C E   T E S T   C A S E S   H E R E
