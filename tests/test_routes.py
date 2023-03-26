@@ -7,6 +7,7 @@ Test cases can be run with the following:
 """
 import os
 import logging
+from urllib.parse import quote_plus
 from unittest import TestCase
 from service import app
 from service.models import db, init_db
@@ -214,6 +215,75 @@ class TestOrderService(TestCase):
         response = self.app.get(f"{BASE_URL}/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_query_order_list_by_customer(self):
+        """It should Query Orders by Customer ID"""
+        orders = self._create_orders(10)
+        test_customer_id = orders[0].customer_id
+        customer_orders = [order for order in orders if order.customer_id == test_customer_id]
+        response = self.app.get(
+            BASE_URL,
+            query_string=f"customer_id={test_customer_id}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(customer_orders))
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["customer_id"], test_customer_id)
+
+    def test_query_order_list_by_status(self):
+        """It should Query Orders by Status"""
+        orders = self._create_orders(10)
+        test_status = orders[0].status
+        status_orders = [order for order in orders if order.status == test_status]
+        response = self.app.get(
+            BASE_URL, query_string=f"status={quote_plus(test_status.name)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(status_orders))
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["status"], test_status.name)
+
+    def test_query_order_list_by_product(self):
+        """It should Query Orders by Product ID"""
+        orders = self._create_orders(3)
+        items = OrderItemFactory.create_batch(3)
+
+        test_product_id = 15
+        items[0].product_id = test_product_id
+        items[2].product_id = test_product_id
+
+        # Create item 1
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[0].id}/items", json=items[0].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 2
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[1].id}/items", json=items[1].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 3
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[2].id}/items", json=items[2].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        response = self.app.get(
+            BASE_URL,
+            query_string=f"product_id={test_product_id}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["items"][0]["product_id"], test_product_id)
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
@@ -246,6 +316,13 @@ class TestOrderService(TestCase):
         test_order["status"] = "created"  # wrong value
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_query_order_list_by_bad_status(self):
+        """It should not Query Orders by bad status"""
+        bad_status = "unknown"
+        response = self.app.get(BASE_URL, query_string=f"status={quote_plus(bad_status)}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.get_json()["message"], f"400 Bad Request: Invalid status '{bad_status}'.")
 
     ######################################################################
     #  I T E M  -  P L A C E   T E S T   C A S E S   H E R E

@@ -209,6 +209,48 @@ class Order(db.Model):
         logger.info("Processing lookup or 404 for order id %s ...", order_id)
         return cls.query.get_or_404(order_id)
 
+    @classmethod
+    def find_by_customer(cls, customer_id: int) -> list:
+        """Returns all Orders of the given customer
+
+        :param customer_id: the id of the customer you want to match
+        :type customer_id: int
+
+        :return: a collection of Orders with that customer id
+        :rtype: list
+
+        """
+        logger.info("Processing customer id query for %d ...", customer_id)
+        return cls.query.filter(cls.customer_id == customer_id)
+
+    @classmethod
+    def find_by_status(cls, status: OrderStatus = OrderStatus.CONFIRMED) -> list:
+        """Returns all Orders by the given Status
+
+        :param status: values are ['CONFIRMED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+        :type status: enum
+
+        :return: a collection of Orders that are matching the given status
+        :rtype: list
+
+        """
+        logger.info("Processing status query for %s ...", status.name)
+        return cls.query.filter(cls.status == status)
+
+    @classmethod
+    def find_by_product(cls, product_id: int) -> list:
+        """Returns all Orders that contain a given product
+
+        :param product_id: the id of the product you want to match
+        :type product_id: int
+
+        :return: a collection of Orders with that product id
+        :rtype: list
+
+        """
+        logger.info("Processing product id query for %d ...", product_id)
+        return cls.query.filter(cls.items.any(product_id=product_id))
+
 
 class OrderItem(db.Model):
     """

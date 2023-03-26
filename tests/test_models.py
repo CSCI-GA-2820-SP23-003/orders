@@ -336,6 +336,66 @@ class TestOrderModel(unittest.TestCase):
         order = Order.find(order.id)
         self.assertEqual(len(order.items), 0)
 
+    def test_find_by_customer(self):
+        """It should Find Orders by Customer ID"""
+        orders = OrderFactory.create_batch(10)
+        for order in orders:
+            order.create()
+
+        # Make sure the orders got saved
+        self.assertEqual(len(Order.all()), 10)
+
+        # Fetch filtered orders - same customer
+        customer_id = orders[0].customer_id
+        count = len([order for order in orders if order.customer_id == customer_id])
+        found_orders = Order.find_by_customer(customer_id)
+        self.assertEqual(found_orders.count(), count)
+        for order in found_orders:
+            self.assertEqual(order.customer_id, customer_id)
+
+        # Fetch filtered orders - different customer
+        self.assertEqual(Order.find_by_customer(4).count(), 0)
+
+    def test_find_by_status(self):
+        """It should Find Orders by Status"""
+        orders = OrderFactory.create_batch(10)
+        for order in orders:
+            order.create()
+
+        # Make sure the orders got saved
+        self.assertEqual(len(Order.all()), 10)
+
+        status = orders[0].status
+        count = len([order for order in orders if order.status == status])
+        found_orders = Order.find_by_status(status)
+        self.assertEqual(found_orders.count(), count)
+        for order in found_orders:
+            self.assertEqual(order.status, status)
+
+    def test_find_by_product(self):
+        """It should Find an Orders by Product ID"""
+        orders = OrderFactory.create_batch(3)
+        for order in orders:
+            order.create()
+
+        test_product_id = 12
+        items = OrderItemFactory.create_batch(3)
+        items[0].product_id = test_product_id
+        items[1].product_id = test_product_id
+
+        for i in range(3):
+            items[i].order_id = orders[i].id
+            items[i].create()
+
+        # make sure they got saved
+        self.assertEqual(len(Order.all()), 3)
+        self.assertEqual(len(OrderItem.all()), 3)
+
+        count = len([order for order in orders if any(order_item.product_id == test_product_id for order_item in order.items)])
+        found_orders = Order.find_by_product(test_product_id)
+        self.assertEqual(found_orders.count(), count)
+        for order in found_orders:
+            self.assertTrue(any(item.product_id == test_product_id for item in order.items))
 
 ######################################################################
 #  O R D E R   I T E M   M O D E L   T E S T   C A S E S
