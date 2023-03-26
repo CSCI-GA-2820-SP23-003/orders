@@ -214,6 +214,22 @@ class TestOrderService(TestCase):
         response = self.app.get(f"{BASE_URL}/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_query_order_list_by_customer(self):
+        """It should Query Orders by Customer ID"""
+        orders = self._create_orders(10)
+        test_customer_id = orders[0].customer_id
+        customer_orders = [order for order in orders if order.customer_id == test_customer_id]
+        response = self.app.get(
+            BASE_URL,
+            query_string=f"customer_id={test_customer_id}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(customer_orders))
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["customer_id"], test_customer_id)
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################

@@ -77,7 +77,13 @@ def get_order(order_id):
 def list_orders():
     """List all of the Orders"""
     app.logger.info("Request for order list")
-    orders = Order.all()
+    orders = []
+    customer_id = request.args.get("customer_id")
+    if customer_id:
+        app.logger.info("Request for query by customer id: %s", customer_id)
+        orders = Order.find_by_customer(int(customer_id))
+    else:
+        orders = Order.all()
     results = [order.serialize() for order in orders]
     app.logger.info("Returning %d orders", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)

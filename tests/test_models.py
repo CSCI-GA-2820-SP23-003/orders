@@ -336,6 +336,25 @@ class TestOrderModel(unittest.TestCase):
         order = Order.find(order.id)
         self.assertEqual(len(order.items), 0)
 
+    def test_find_by_customer(self):
+        """It should Find Orders by Customer ID"""
+        orders = OrderFactory.create_batch(10)
+        for order in orders:
+            order.create()
+
+        # Make sure the orders got saved
+        self.assertEqual(len(Order.all()), 10)
+
+        # Fetch filtered orders - same customer
+        customer_id = orders[0].customer_id
+        count = len([order for order in orders if order.customer_id == customer_id])
+        found_orders = Order.find_by_customer(customer_id)
+        self.assertEqual(found_orders.count(), count)
+        for order in found_orders:
+            self.assertEqual(order.customer_id, customer_id)
+
+        # Fetch filtered orders - different customer
+        self.assertEqual(Order.find_by_customer(4).count(), 0)
 
 ######################################################################
 #  O R D E R   I T E M   M O D E L   T E S T   C A S E S

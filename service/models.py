@@ -209,6 +209,20 @@ class Order(db.Model):
         logger.info("Processing lookup or 404 for order id %s ...", order_id)
         return cls.query.get_or_404(order_id)
 
+    @classmethod
+    def find_by_customer(cls, customer_id: int) -> list:
+        """Returns all Orders of the given customer
+
+        :param customer_id: the id of the customer you want to match
+        :type customer_id: int
+
+        :return: a collection of Orders with that customer id
+        :rtype: list
+
+        """
+        logger.info("Processing customer id query for %d ...", customer_id)
+        return cls.query.filter(cls.customer_id == customer_id)
+
 
 class OrderItem(db.Model):
     """
