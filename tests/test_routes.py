@@ -286,24 +286,23 @@ class TestOrderService(TestCase):
 
     def test_cancel_order(self):
         """Cancelling order"""
-        # test cancel received order
-        received_order = OrderFactory()
-        received_order.status = OrderStatus.CONFIRMED  # change status to confirmed
-        resp = self.app.post(
-            BASE_URL, json=received_order.serialize(), content_type="application/json"
-        )
+        # test cancel order
+        test_order = OrderFactory()
+        test_order.status = OrderStatus.CONFIRMED  # change status to confirmed
+        resp = self.app.post(BASE_URL, json=test_order.serialize())
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data["status"], OrderStatus.CONFIRMED.name)
-        logging.debug(received_order)
-        # try cancelling a received order
-        received_order.id = data["id"]
-        resp = self.app.put(f"{BASE_URL}/{received_order.id}/cancel")
+        logging.debug(test_order)
+
+        # try cancelling an order
+        resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
         # try get the order back and check for status
-        resp = self.app.get(f"{BASE_URL}/{received_order.id}")
+        resp = self.app.get(f"{BASE_URL}/{data['id']}")
         data = resp.get_json()
-        logging.debug(received_order)
+        logging.debug(test_order)
         self.assertEqual(data['status'], OrderStatus.CANCELLED.name)
 
     ######################################################################

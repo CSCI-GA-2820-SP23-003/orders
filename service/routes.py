@@ -294,6 +294,25 @@ def update_item(order_id, item_id):
     message = item.serialize()
     return make_response(jsonify(message), status.HTTP_200_OK)
 
+######################################################################
+# CANCEL AN ORDER
+######################################################################
+
+@app.route('/orders/<int:order_id>/cancel', methods=["PUT"])
+def cancel_order(order_id):
+    """
+    Cancel an Order
+    """
+    app.logger.info("Action to cancel order with order_id [%s]", order_id)
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND,
+                f"Order with id '{order_id}' was not found.")
+    order.status = OrderStatus.CANCELLED
+    order.update()
+    message = order.serialize()
+    return make_response(jsonify(message), status.HTTP_200_OK)
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
