@@ -7,7 +7,7 @@ Describe what your service does here
 from flask import jsonify, request, url_for, make_response, abort
 from service.common import status  # HTTP Status Codes
 # pylint: disable=cyclic-import
-from service.models import Order, OrderItem
+from service.models import Order, OrderItem, OrderStatus
 
 # Import Flask application
 from . import app
@@ -79,9 +79,15 @@ def list_orders():
     app.logger.info("Request for order list")
     orders = []
     customer_id = request.args.get("customer_id")
+    order_status = request.args.get("status")
     if customer_id:
         app.logger.info("Request for query by customer id: %s", customer_id)
         orders = Order.find_by_customer(int(customer_id))
+    elif order_status:
+        if order_status not in OrderStatus.__members__:
+            abort(status.HTTP_400_BAD_REQUEST, f"Invalid status '{order_status}'.")
+        app.logger.info("Request for query by status: %s", order_status)
+        orders = Order.find_by_status(OrderStatus[order_status])
     else:
         orders = Order.all()
     results = [order.serialize() for order in orders]

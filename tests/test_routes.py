@@ -7,6 +7,7 @@ Test cases can be run with the following:
 """
 import os
 import logging
+from urllib.parse import quote_plus
 from unittest import TestCase
 from service import app
 from service.models import db, init_db
@@ -230,6 +231,21 @@ class TestOrderService(TestCase):
         for order in data:
             self.assertEqual(order["customer_id"], test_customer_id)
 
+    def test_query_order_list_by_status(self):
+        """It should Query Orders by Status"""
+        orders = self._create_orders(10)
+        test_status = orders[0].status
+        status_orders = [order for order in orders if order.status == test_status]
+        response = self.app.get(
+            BASE_URL, query_string=f"status={quote_plus(test_status.name)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(status_orders))
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["status"], test_status.name)
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
@@ -262,6 +278,13 @@ class TestOrderService(TestCase):
         test_order["status"] = "created"  # wrong value
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_query_order_list_by_bad_status(self):
+        """It should not Query Orders by bad status"""
+        bad_status = "unknown"
+        response = self.app.get(BASE_URL, query_string=f"status={quote_plus(bad_status)}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.get_json()["message"], f"400 Bad Request: Invalid status '{bad_status}'.")
 
     ######################################################################
     #  I T E M  -  P L A C E   T E S T   C A S E S   H E R E

@@ -356,6 +356,22 @@ class TestOrderModel(unittest.TestCase):
         # Fetch filtered orders - different customer
         self.assertEqual(Order.find_by_customer(4).count(), 0)
 
+    def test_find_by_status(self):
+        """It should Find Orders by Status"""
+        orders = OrderFactory.create_batch(10)
+        for order in orders:
+            order.create()
+
+        # Make sure the orders got saved
+        self.assertEqual(len(Order.all()), 10)
+
+        status = orders[0].status
+        count = len([order for order in orders if order.status == status])
+        found_orders = Order.find_by_status(status)
+        self.assertEqual(found_orders.count(), count)
+        for order in found_orders:
+            self.assertEqual(order.status, status)
+
 ######################################################################
 #  O R D E R   I T E M   M O D E L   T E S T   C A S E S
 ######################################################################

@@ -223,6 +223,20 @@ class Order(db.Model):
         logger.info("Processing customer id query for %d ...", customer_id)
         return cls.query.filter(cls.customer_id == customer_id)
 
+    @classmethod
+    def find_by_status(cls, status: OrderStatus = OrderStatus.CONFIRMED) -> list:
+        """Returns all Orders by the given Status
+
+        :param status: values are ['CONFIRMED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+        :type status: enum
+
+        :return: a collection of Orders that are matching the given status
+        :rtype: list
+
+        """
+        logger.info("Processing status query for %s ...", status.name)
+        return cls.query.filter(cls.status == status)
+
 
 class OrderItem(db.Model):
     """
