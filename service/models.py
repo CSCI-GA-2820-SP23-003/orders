@@ -237,6 +237,20 @@ class Order(db.Model):
         logger.info("Processing status query for %s ...", status.name)
         return cls.query.filter(cls.status == status)
 
+    @classmethod
+    def find_by_product(cls, product_id: int) -> list:
+        """Returns all Orders that contain a given product
+
+        :param product_id: the id of the product you want to match
+        :type product_id: int
+
+        :return: a collection of Orders with that product id
+        :rtype: list
+
+        """
+        logger.info("Processing product id query for %d ...", product_id)
+        return cls.query.filter(cls.items.any(product_id=product_id))
+
 
 class OrderItem(db.Model):
     """

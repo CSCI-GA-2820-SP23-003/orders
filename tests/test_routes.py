@@ -246,6 +246,44 @@ class TestOrderService(TestCase):
         for order in data:
             self.assertEqual(order["status"], test_status.name)
 
+    def test_query_order_list_by_product(self):
+        """It should Query Orders by Product ID"""
+        orders = self._create_orders(3)
+        items = OrderItemFactory.create_batch(3)
+
+        test_product_id = 15
+        items[0].product_id = test_product_id
+        items[2].product_id = test_product_id
+
+        # Create item 1
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[0].id}/items", json=items[0].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 2
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[1].id}/items", json=items[1].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 3
+        resp = self.app.post(
+            f"{BASE_URL}/{orders[2].id}/items", json=items[2].serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        response = self.app.get(
+            BASE_URL,
+            query_string=f"product_id={test_product_id}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        # check the data just to be sure
+        for order in data:
+            self.assertEqual(order["items"][0]["product_id"], test_product_id)
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
