@@ -349,7 +349,7 @@ class TestOrderService(TestCase):
         """Cancelling order not exists"""
         resp = self.app.put(f"{BASE_URL}/1/cancel")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_cancel_order_already_cancel(self):
         """Cancelling order already_cancel"""
         test_order = OrderFactory()
@@ -376,7 +376,8 @@ class TestOrderService(TestCase):
         # try cancelling an order again
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(resp.get_json()["message"], f"409 Conflict: Order with id {data['id']} is {data['status']}, request conflicted.")
+        self.assertEqual(resp.get_json()["message"],
+                         f"409 Conflict: Order with id {data['id']} is {data['status']}, request conflicted.")
 
         test_order = OrderFactory()
         test_order.status = OrderStatus.DELIVERED  # change status to delivered
@@ -388,7 +389,8 @@ class TestOrderService(TestCase):
         # try cancelling an order again
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(resp.get_json()["message"], f"409 Conflict: Order with id {data['id']} is {data['status']}, request conflicted.")
+        self.assertEqual(resp.get_json()["message"],
+                         f"409 Conflict: Order with id {data['id']} is {data['status']}, request conflicted.")
 
     ######################################################################
     #  I T E M  -  P L A C E   T E S T   C A S E S   H E R E
@@ -512,14 +514,16 @@ class TestOrderService(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.get_json()["message"], f"404 Not Found: Item with id '{item_id_order_1}' was not found.")
+        self.assertEqual(response.get_json()["message"],
+                         f"404 Not Found: Item with id '{item_id_order_1}' was not found.")
 
         response = self.app.get(
             f"{BASE_URL}/{orders[1].id}/items/{item_id_order_0}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.get_json()["message"], f"404 Not Found: Item with id '{item_id_order_0}' was not found.")
+        self.assertEqual(response.get_json()["message"],
+                         f"404 Not Found: Item with id '{item_id_order_0}' was not found.")
 
         # Now retrieve them with correct order id
         response = self.app.get(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_0}")
