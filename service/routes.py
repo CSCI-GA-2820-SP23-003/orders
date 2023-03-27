@@ -308,6 +308,19 @@ def cancel_order(order_id):
     if not order:
         abort(status.HTTP_404_NOT_FOUND,
                 f"Order with id '{order_id}' was not found.")
+    # If order status passed Shipped, then we set to conflict
+    if order.status == OrderStatus.SHIPPED or order.status == OrderStatus.DELIVERED:
+        abort(
+            status.HTTP_409_CONFLICT,
+            f"Order with id {order_id} is {order.status.name}, request conflicted.",
+        )
+
+    if order.status == OrderStatus.CANCELLED:
+        abort(
+            status.HTTP_409_CONFLICT,
+            f"Order with id {order_id} is already cancelled.",
+        )
+    
     order.status = OrderStatus.CANCELLED
     order.update()
     message = order.serialize()
