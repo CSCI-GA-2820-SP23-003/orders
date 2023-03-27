@@ -293,7 +293,6 @@ class TestOrderService(TestCase):
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data["status"], OrderStatus.CONFIRMED.name)
-        logging.debug(test_order)
 
         # try cancelling an order
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
@@ -302,7 +301,6 @@ class TestOrderService(TestCase):
         # try get the order back and check for status
         resp = self.app.get(f"{BASE_URL}/{data['id']}")
         data = resp.get_json()
-        logging.debug(test_order)
         self.assertEqual(data['status'], OrderStatus.CANCELLED.name)
 
     ######################################################################
@@ -358,7 +356,6 @@ class TestOrderService(TestCase):
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data["status"], OrderStatus.CANCELLED.name)
-        logging.debug(test_order)
         # try cancelling an order again
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
@@ -372,7 +369,6 @@ class TestOrderService(TestCase):
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data["status"], OrderStatus.SHIPPED.name)
-        logging.debug(test_order)
         # try cancelling an order again
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
@@ -385,7 +381,6 @@ class TestOrderService(TestCase):
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data["status"], OrderStatus.DELIVERED.name)
-        logging.debug(test_order)
         # try cancelling an order again
         resp = self.app.put(f"{BASE_URL}/{data['id']}/cancel")
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
