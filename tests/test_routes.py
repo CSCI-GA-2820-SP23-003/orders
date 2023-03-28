@@ -303,6 +303,13 @@ class TestOrderService(TestCase):
         data = resp.get_json()
         self.assertEqual(data['status'], OrderStatus.CANCELLED.name)
 
+    def test_health(self):
+        """It should test health endpoint"""
+        resp = self.app.get("/health")
+        self.assertEqual(resp.status_code, 200)
+        data = resp.get_json()
+        self.assertEqual(data["status"], "OK")
+
     ######################################################################
     #  O R D E R  -  T E S T   S A D   P A T H S
     ######################################################################
