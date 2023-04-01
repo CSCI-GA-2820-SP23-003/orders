@@ -1,5 +1,5 @@
 # These can be overidden with env vars.
-CLUSTER ?= nyu-devops
+CLUSTER ?= nyu-devops-orders
 
 .PHONY: help
 help: ## Display this help
