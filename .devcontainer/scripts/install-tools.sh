@@ -18,7 +18,19 @@ echo "**********************************************************************"
 curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
 echo "source /usr/local/ibmcloud/autocomplete/bash_autocomplete" >> $HOME/.bashrc
 # Install user mode IBM Cloud plugins
+ibmcloud plugin install container-service -r 'IBM Cloud'
 ibmcloud plugin install container-registry -r 'IBM Cloud'
 ibmcloud plugin install kubernetes-service -r 'IBM Cloud'
 echo "Creating aliases for ibmcloud tools..."
 echo "alias ic='/usr/local/bin/ibmcloud'" >> $HOME/.bash_aliases
+
+# Platform specific installs
+if [ $(uname -m) == aarch64 ]; then
+    echo "Installing YQ for ARM64..."
+    sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_arm64
+    sudo chmod a+x /usr/local/bin/yq
+else
+    echo "Installing YQ for x86_64..."
+    sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+    sudo chmod a+x /usr/local/bin/yq
+fi;
