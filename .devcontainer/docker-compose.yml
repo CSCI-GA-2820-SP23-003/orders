@@ -8,9 +8,10 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile    
     hostname: nyu
-    container_name: project
+    container_name: orders
     volumes:
       - ..:/app
+      - ~/.bluemix/apikey-team.json:/home/vscode/apikey-team.json
     command: sleep infinity
     environment:
       FLASK_APP: service:app
