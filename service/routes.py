@@ -344,4 +344,4 @@ def check_content_type(content_type):
 @app.route("/health")
 def health():
     """ Health check for Kubernetes"""
-    return jsonify(dict(status="OK")), status.HTTP_200_OK
+    return jsonify({"status": "OK"}), status.HTTP_200_OK
