@@ -21,7 +21,7 @@ Scenario: The server is running
 Scenario: Create an Order
     When I visit the "Home Page"
     And I set the "Customer ID" to "5"
-    And I select "Confirmed" in the "Status" dropdown
+    And I select "Shipped" in the "Status" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
     And I should see "Today's date" in the "Created On" field
