@@ -36,7 +36,7 @@
 	"postCreateCommand": "sudo pip install -r requirements.txt",
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": 8080,
+	"forwardPorts": [8080],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
