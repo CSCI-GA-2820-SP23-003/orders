@@ -32,4 +32,10 @@ Scenario: Create an Order
     And the "Customer ID" field should be empty
     And the "Created On" field should be empty
     And the "Updated On" field should be empty
-# #Need retrieve function for complete testing
+    When I paste the "ID" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field
+    And I should see "Shipped" in the "status" dropdown
+    And I should see "Today's date" in the "Created On" field
+    And I should see "Today's date" in the "Updated On" field
