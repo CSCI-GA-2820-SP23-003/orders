@@ -104,6 +104,3 @@ ENV/
 .ropeproject
 
 .idea/
-
-# Api keys
-apikey.json
