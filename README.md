@@ -20,9 +20,9 @@ To run the Orders service on a local machine, first clone the repository and the
 2. `code .`
 3. Reopen the folder in Dev Container
 4. Run `flask run` command on the terminal
-5. The service is available at localhost: `http://localhost:8000`
+5. The service is available at localhost: `http://localhost:8080`
 
-To run the all the test cases locally, please run the command `nosetests`. The test cases have `97%` code coverage currently.
+To run the all the test cases locally, please run the command `nosetests`. 
 
 ## Contents
 
