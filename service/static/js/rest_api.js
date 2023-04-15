@@ -89,6 +89,56 @@ $(function () {
     });
 
     // ****************************************
+    // List All Orders
+    // ****************************************
+
+    $("#list-btn").click(function () {
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "GET",
+            url: "/orders",
+            contentType: "application/json",
+            data: ''
+        })
+
+        ajax.done(function(res){
+            $("#search_results").empty();
+            let table = '<table class="table table-striped" cellpadding="10">'
+            table += '<thead><tr>'
+            table += '<th class="col-md-2">ID</th>'
+            table += '<th class="col-md-2">Customer ID</th>'
+            table += '<th class="col-md-2">Status</th>'
+            table += '<th class="col-md-2">Created On</th>'
+            table += '<th class="col-md-2">Updated On</th>'
+            table += '</tr></thead><tbody>'
+            let firstOrder = "";
+            for(let i = 0; i < res.length; i++) {
+                let order = res[i];
+                table +=  `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
+                if (i == 0) {
+                    firstOrder = order;
+                }
+            }
+            table += '</tbody></table>';
+            $("#search_results").append(table);
+
+            // copy the first result to the form
+            if (firstOrder != "") {
+                update_form_data(firstOrder)
+            }
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
     // Clear the form
     // ****************************************
 
