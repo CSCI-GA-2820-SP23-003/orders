@@ -8,10 +8,8 @@ Background:
         | customer_id | status | 
         | 5           | CONFIRMED    |
         | 9           | SHIPPED      |
-        | 3           | SHIPPED      |
         | 2           | DELIVERED    |
         | 2           | CANCELLED    |
-        | 5           | IN_PROGRESS  |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -39,3 +37,11 @@ Scenario: Create an Order
     And I should see "Shipped" in the "status" dropdown
     And I should see "Today's date" in the "Created On" field
     And I should see "Today's date" in the "Updated On" field
+
+Scenario: List all Orders
+    When I visit the "Home Page"
+    And I press the "List" button
+    Then I should see the message "Success"
+    And I should see "CONFIRMED" in the results
+    And I should see "SHIPPED" in the results
+    And I should not see "IN_PROGRESS" in the results
