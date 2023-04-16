@@ -63,4 +63,3 @@ Scenario: Update an Order
     And I should see "6" in the "Customer ID" field
     And I should see "Shipped" in the "status" dropdown
     And I should see "Today's date" in the "Updated On" field
-    When I copy the "ID" field
