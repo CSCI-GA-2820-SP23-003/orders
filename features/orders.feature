@@ -45,3 +45,29 @@ Scenario: List all Orders
     And I should see "CONFIRMED" in the results
     And I should see "SHIPPED" in the results
     And I should not see "IN_PROGRESS" in the results
+
+Scenario: Update an Order
+    When I visit the "Home Page"
+    And I press the "List" button
+    And I copy the "ID" field
+    And I press the "clear" button
+    And I paste the "ID" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field
+    And I should see "Confirmed" in the "status" dropdown
+    When I change "Customer ID" to "6"
+    And I select "Shipped" in the "status" dropdown
+    And I press the "Update" button
+    Then I should see the message "Success"
+    And I should see "6" in the "Customer ID" field
+    And I should see "Shipped" in the "status" dropdown
+    And I should see "Today's date" in the "Updated On" field
+    When I copy the "ID" field
+    And I press the "clear" button
+    And I paste the "ID" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "6" in the "Customer ID" field
+    And I should see "Shipped" in the "status" dropdown
+    And I should see "Today's date" in the "Updated On" field
