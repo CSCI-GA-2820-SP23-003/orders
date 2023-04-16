@@ -139,6 +139,41 @@ $(function () {
     });
 
     // ****************************************
+    // Update an Order
+    // ****************************************
+
+    $("#update-btn").click(function () {
+
+        let order_id = $("#order_id").val();
+        let customer_id = $("#order_customer_id").val();
+        let status = $("#order_status").val();
+
+        let data = {
+            "customer_id": customer_id,
+            "status": status
+        };
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+                type: "PUT",
+                url: `/orders/${order_id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
     // Clear the form
     // ****************************************
 
