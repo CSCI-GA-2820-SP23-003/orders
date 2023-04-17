@@ -98,3 +98,19 @@ Scenario: Cancel an Order
     And I should see "5" in the "Customer ID" field
     And I should see "Cancelled" in the "status" dropdown
     And I should see "Today's date" in the "Updated On" field
+
+
+Scenario: Delete an Order
+    When I visit the "Home Page"
+    And I press the "List" button
+    Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field 
+    When I copy the "ID" field  
+    And I press the "Clear" button
+    Then the "ID" field should be empty
+    And the "Customer ID" field should be empty
+    And the "Created On" field should be empty
+    And the "Updated On" field should be empty
+    When I paste the "ID" field
+    And I press the "Delete" button
+    Then I should see the message "Order has been Deleted!"

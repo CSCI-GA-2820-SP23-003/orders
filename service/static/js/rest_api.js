@@ -203,6 +203,33 @@ $(function () {
     });
 
     // ****************************************
+    // Delete an Order
+    // ****************************************
+
+    $("#delete-btn").click(function () {
+        let order_id = $("#order_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `/orders/${order_id}`,
+            contentType: "application/json"
+        })
+
+        ajax.done(function(res){
+            // remove the order from the form and table
+            clear_form_data();
+            flash_message("Order has been Deleted!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Order does not exist!")
+        });
+    });
+    
+
+    // ****************************************
     // Clear the form
     // ****************************************
 
