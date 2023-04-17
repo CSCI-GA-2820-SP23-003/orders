@@ -25,8 +25,8 @@ def step_impl(context):
     # load the database with new orders
     for row in context.table:
         payload = {
-            "customer_id": row['customer_id'],
-            "status": row['status'],
+            "customer_id": row['Customer ID'],
+            "status": row['Status'],
         }
         context.resp = requests.post(rest_endpoint, json=payload)
         expect(context.resp.status_code).to_equal(201)

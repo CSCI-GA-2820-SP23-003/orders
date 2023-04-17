@@ -5,11 +5,11 @@ Feature: The order service back-end
 
 Background:
     Given the following orders:
-        | customer_id | status | 
+        | Customer ID | Status       | 
         | 5           | CONFIRMED    |
-        | 9           | SHIPPED      |
-        | 2           | DELIVERED    |
-        | 2           | CANCELLED    |
+        | 90          | SHIPPED      |
+        | 201         | DELIVERED    |
+        | 56          | CANCELLED    |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -18,7 +18,7 @@ Scenario: The server is running
 
 Scenario: Create an Order
     When I visit the "Home Page"
-    And I set the "Customer ID" to "5"
+    And I set the "Customer ID" to "78"
     And I select "Shipped" in the "Status" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
@@ -33,8 +33,25 @@ Scenario: Create an Order
     When I paste the "ID" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
-    And I should see "5" in the "Customer ID" field
+    And I should see "78" in the "Customer ID" field
     And I should see "Shipped" in the "status" dropdown
+    And I should see "Today's date" in the "Created On" field
+    And I should see "Today's date" in the "Updated On" field
+
+Scenario: Retrieve an Order
+    When I visit the "Home Page"
+    And I press the "List" button
+    And I copy the "ID" field
+    And I press the "Clear" button
+    Then the "ID" field should be empty
+    And the "Customer ID" field should be empty
+    And the "Created On" field should be empty
+    And the "Updated On" field should be empty
+    When I paste the "ID" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field
+    And I should see "Confirmed" in the "status" dropdown
     And I should see "Today's date" in the "Created On" field
     And I should see "Today's date" in the "Updated On" field
 
@@ -50,7 +67,7 @@ Scenario: Update an Order
     When I visit the "Home Page"
     And I press the "List" button
     And I copy the "ID" field
-    And I press the "clear" button
+    And I press the "Clear" button
     And I paste the "ID" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
@@ -64,7 +81,7 @@ Scenario: Update an Order
     And I should see "Shipped" in the "status" dropdown
     And I should see "Today's date" in the "Updated On" field
     When I copy the "ID" field
-    And I press the "clear" button
+    And I press the "Clear" button
     And I paste the "ID" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
