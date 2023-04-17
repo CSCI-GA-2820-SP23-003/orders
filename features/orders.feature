@@ -114,3 +114,6 @@ Scenario: Delete an Order
     When I paste the "ID" field
     And I press the "Delete" button
     Then I should see the message "Order has been Deleted!"
+    When I press the "List" button
+    Then I should see the message "Success"
+    And I should not see "CONFIRMED" in the results

@@ -224,7 +224,7 @@ $(function () {
         });
 
         ajax.fail(function(res){
-            flash_message("Order does not exist!")
+            flash_message(res.responseJSON.message)
         });
     });
     
