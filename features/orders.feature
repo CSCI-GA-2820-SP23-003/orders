@@ -5,7 +5,7 @@ Feature: The order service back-end
 
 Background:
     Given the following orders:
-        | customer_id | status | 
+        | Customer ID | Status       | 
         | 5           | CONFIRMED    |
         | 9           | SHIPPED      |
         | 2           | DELIVERED    |
@@ -38,6 +38,26 @@ Scenario: Create an Order
     And I should see "Today's date" in the "Created On" field
     And I should see "Today's date" in the "Updated On" field
 
+Scenario: Retrieve an Order
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "CONFIRMED" in the results
+    When I copy the "ID" field
+    And I press the "Clear" button
+    Then the "ID" field should be empty
+    And the "Customer ID" field should be empty
+    And the "Created On" field should be empty
+    And the "Updated On" field should be empty
+    When I paste the "ID" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field
+    And I should see "Confirmed" in the "status" dropdown
+    And I should see "Today's date" in the "Created On" field
+    And I should see "Today's date" in the "Updated On" field
+
 Scenario: List all Orders
     When I visit the "Home Page"
     And I press the "Clear" button
@@ -52,9 +72,12 @@ Scenario: List all Orders
 Scenario: Update an Order
     When I visit the "Home Page"
     And I press the "Search" button
-    And I copy the "ID" field
-    And I press the "clear" button
-    And I paste the "ID" field
+    Then I should see the message "Success"
+    And I should see "CONFIRMED" in the results
+    When I copy the "ID" field
+    And I press the "Clear" button
+    Then the "ID" field should be empty
+    When I paste the "ID" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "5" in the "Customer ID" field
@@ -67,8 +90,9 @@ Scenario: Update an Order
     And I should see "Shipped" in the "status" dropdown
     And I should see "Today's date" in the "Updated On" field
     When I copy the "ID" field
-    And I press the "clear" button
-    And I paste the "ID" field
+    And I press the "Clear" button
+    Then the "ID" field should be empty
+    When I paste the "ID" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "6" in the "Customer ID" field
