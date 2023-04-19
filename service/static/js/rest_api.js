@@ -92,13 +92,24 @@ $(function () {
     // List All Orders
     // ****************************************
 
-    $("#list-btn").click(function () {
+    $("#search-btn").click(function () {
+
+        let customer_id = $("#order_customer_id").val();
+        let status = $("#order_status").val();
+
+        let queryString = "";
+
+        if (customer_id){
+            queryString += 'customer_id=' + customer_id;
+        } else if (status) {
+            queryString += 'status=' + status;
+        }
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "GET",
-            url: "/orders",
+            url: `/orders?${queryString}`,
             contentType: "application/json",
             data: ''
         })
