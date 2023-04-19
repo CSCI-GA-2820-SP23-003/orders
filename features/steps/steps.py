@@ -104,6 +104,13 @@ def step_impl(context, text_string, element_name):
     )
     expect(found).to_be(True)
 
+@then('I should not see "{text_string}" in the "{element_name}" field')
+def step_impl(context, text_string, element_name):
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
+    element = context.driver.find_element_by_id(element_id)
+    error_msg = "I should not see '%s' in '%s'" % (text_string, element.text)
+    ensure(text_string in element.text, False, error_msg)
+
 @then('the "{element_name}" field should be empty')
 def step_impl(context, element_name):
     element_id = ID_PREFIX + element_name.lower().replace(' ', '_')

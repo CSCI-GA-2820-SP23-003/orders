@@ -40,15 +40,18 @@ Scenario: Create an Order
 
 Scenario: List all Orders
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Clear" button
+    And I press the "Search" button
     Then I should see the message "Success"
     And I should see "CONFIRMED" in the results
     And I should see "SHIPPED" in the results
+    And I should see "DELIVERED" in the results
+    And I should see "CANCELLED" in the results
     And I should not see "IN_PROGRESS" in the results
 
 Scenario: Update an Order
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Search" button
     And I copy the "ID" field
     And I press the "clear" button
     And I paste the "ID" field
@@ -74,7 +77,7 @@ Scenario: Update an Order
 
 Scenario: Cancel an Order
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Search" button
     Then I should see the message "Success"
     And I should see "5" in the "Customer ID" field
     And I should see "Confirmed" in the "status" dropdown
@@ -102,7 +105,7 @@ Scenario: Cancel an Order
 
 Scenario: Delete an Order
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Search" button
     Then I should see the message "Success"
     And I should see "5" in the "Customer ID" field 
     When I copy the "ID" field  
@@ -114,6 +117,32 @@ Scenario: Delete an Order
     When I paste the "ID" field
     And I press the "Delete" button
     Then I should see the message "Order has been Deleted!"
-    When I press the "List" button
+    When I press the "Retrieve" button
+    Then I should see the message "404 Not Found"
+    And the "Customer ID" field should be empty
+    And the "Created On" field should be empty
+    And the "Updated On" field should be empty
+
+Scenario: Search for Customers
+    When I visit the "Home Page"
+    And I set the "Customer ID" to "5"
+    And I press the "Search" button
     Then I should see the message "Success"
+    And I should see "5" in the "Customer ID" field 
+    And I should see "CONFIRMED" in the results
+    And I should not see "SHIPPED" in the results
+    And I should not see "DELIVERED" in the results
+    And I should not see "CANCELLED" in the results
+    And I should not see "9" in the "Customer ID" field
+    And I should not see "2" in the "Customer ID" field
+
+Scenario: Search for Order Status
+    When I visit the "Home Page"
+    And I select "Shipped" in the "Status" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "SHIPPED" in the results
     And I should not see "CONFIRMED" in the results
+    And I should not see "DELIVERED" in the results
+    And I should not see "CANCELLED" in the results
+    And I should not see "IN_PROGRESS" in the results
