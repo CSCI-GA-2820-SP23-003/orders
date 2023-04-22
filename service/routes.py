@@ -37,7 +37,7 @@ item_model = api.inherit(
 order_core_model = api.model('OrderCore', {
     'customer_id': fields.Integer(required=True,
                                   description='ID of the customer who placed the order'),
-    'status': fields.String(enum=OrderStatus._member_names_, description='The status of the order'),
+    'status': fields.String(enum=[s.name for s in OrderStatus], description='The status of the order'),
 })
 
 order_create_model = api.inherit(
@@ -102,9 +102,9 @@ class OrderResource(Resource):
     DELETE /orders/{id} - Deletes an order with the id
     """
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # RETRIEVE AN ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(404, 'Order not found')
     @api.marshal_with(order_model)
     def get(self, order_id):
@@ -120,9 +120,9 @@ class OrderResource(Resource):
         app.logger.info('Returning order: %s', order.id)
         return order.serialize(), status.HTTP_200_OK
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # UPDATE AN EXISTING ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(404, 'Order not found')
     @api.response(400, 'The posted Order data was not valid')
     @api.expect(order_model)
@@ -148,9 +148,9 @@ class OrderResource(Resource):
         app.logger.info('Order with ID [%s] updated.', order.id)
         return order.serialize(), status.HTTP_200_OK
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # DELETE AN ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(204, 'Order deleted')
     def delete(self, order_id):
         """
@@ -172,9 +172,9 @@ class OrderResource(Resource):
 @api.route('/orders', strict_slashes=False)
 class OrderCollection(Resource):
     """ Handles all interactions with collections of Orders """
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # LIST ALL ORDERS
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(400, 'Invalid order status')
     @api.expect(order_args, validate=True)
     @api.marshal_list_with(order_model)
@@ -202,10 +202,9 @@ class OrderCollection(Resource):
         app.logger.info('[%s] Orders returned', len(results))
         return results, status.HTTP_200_OK
 
-
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # ADD A NEW ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(400, 'The posted data was not valid')
     @api.expect(order_create_model)
     @api.marshal_with(order_model, code=201)
@@ -274,9 +273,9 @@ class OrderItemResource(Resource):
     DELETE /orders/{order_id}/items/{item_id} -  Deletes an Order Item with the id
     """
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # RETRIEVE AN ORDER ITEM
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.marshal_with(item_model)
     @api.response(404, 'Order Item not found')
     def get(self, order_id, item_id):
@@ -301,9 +300,9 @@ class OrderItemResource(Resource):
         app.logger.info('Returning order item: %s', item.id)
         return item.serialize(), status.HTTP_200_OK
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # UPDATE AN EXISTING ORDER ITEM
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(404, 'Order Item not found')
     @api.response(400, 'The posted Order Item data was not valid')
     @api.expect(item_model)
@@ -315,7 +314,7 @@ class OrderItemResource(Resource):
         This endpoint will update an Order Item based on the body that is posted
         """
         app.logger.info('Request to update item with order_id [%s] and item_id [%s] ...', order_id, item_id)
-        
+
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
@@ -333,10 +332,9 @@ class OrderItemResource(Resource):
         app.logger.info('Item with order_id [%s] and item_id [%s] updated.', order.id, item.id)
         return item.serialize(), status.HTTP_200_OK
 
-
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # DELETE AN ORDER ITEM
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(204, 'Order Item deleted')
     def delete(self, order_id, item_id):
         """
@@ -364,9 +362,9 @@ class OrderItemResource(Resource):
 @api.param('order_id', 'The Order identifier')
 class OrderItemCollection(Resource):
     """ Handles all interactions with collections of Order Items """
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # LIST ALL ITEMS FOR AN ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.marshal_list_with(item_model)
     def get(self, order_id):
         """List all of the Items from an Order"""
@@ -374,15 +372,14 @@ class OrderItemCollection(Resource):
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
-       
+
         results = [item.serialize() for item in order.items]
         app.logger.info("Returning %d items", len(results))
         return results, status.HTTP_200_OK
 
-
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # ADD A NEW ITEM TO AN ORDER
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @api.response(400, 'The posted data was not valid')
     @api.expect(item_create_model)
     @api.marshal_with(item_model, code=201)

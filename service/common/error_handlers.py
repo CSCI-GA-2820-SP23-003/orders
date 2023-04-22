@@ -21,6 +21,7 @@ from service import app, api
 from service.models import DataValidationError
 from . import status
 
+
 ######################################################################
 # Error Handlers
 ######################################################################
