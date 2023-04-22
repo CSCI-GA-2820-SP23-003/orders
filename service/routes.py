@@ -31,6 +31,8 @@ item_model = api.inherit(
                                    description='The order in which the product was purchased'),
         'id': fields.Integer(readOnly=True,
                              description='The unique id assigned internally by service'),
+        'created_on': fields.Date(readOnly=True, description='The day the order item was created'),
+        'updated_on': fields.Date(readOnly=True, description='The day the order item was updated')
     },
 )
 
@@ -59,6 +61,8 @@ order_model = api.inherit(
                              description='The product items that the order contains'),
         'id': fields.Integer(readOnly=True,
                              description='The unique id assigned internally by service'),
+        'created_on': fields.Date(readOnly=True, description='The day the order was created'),
+        'updated_on': fields.Date(readOnly=True, description='The day the order was updated')
     }
 )
 
