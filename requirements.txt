@@ -1,13 +1,13 @@
 # Pin dependancies that might cause breakage
-Werkzeug==2.0.3
-SQLAlchemy==1.4.0
+Werkzeug==2.2.3
+SQLAlchemy==2.0.0
 
 # Build dependencies
-Flask==2.1.2
-Flask-RESTX==0.5.1
-Flask-SQLAlchemy==2.5.1
+Flask==2.2.3
+flask-restx==1.1.0
+Flask-SQLAlchemy==3.0.2
 psycopg2==2.9.5
-python-dotenv==0.20.0
+python-dotenv==0.21.1
 
 # Runtime dependencies
 gunicorn==20.1.0
