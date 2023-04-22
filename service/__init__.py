@@ -6,12 +6,31 @@ and SQL database
 """
 import sys
 from flask import Flask
+from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
 # Create Flask application
 app = Flask(__name__)
+
+app.url_map.strict_slashes = False
+
 app.config.from_object(config)
+
+######################################################################
+# Configure Swagger
+######################################################################
+
+api = Api(
+    app,
+    version='1.0.0',
+    title='Orders REST API Service',
+    description='This is Orders Microservice for an E-commerce app.',
+    default='orders',
+    default_label='Orders Microservice',
+    doc='/apidocs',
+    prefix='/api',
+)
 
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order
