@@ -1,7 +1,20 @@
 """
-My Service
+Orders Service with Swagger
 
-Describe what your service does here
+Paths:
+------
+GET / - Displays a UI for Selenium testing
+GET /orders - Returns a list all of the Orders
+GET /orders/{id} - Returns the Order with a given id number
+POST /orders - creates a new Order record in the database
+PUT /orders/{id} - updates an Order record in the database
+DELETE /orders/{id} - deletes an Order record in the database
+
+GET /orders/{order_id}/items - Returns a list all of the Items of the given Order id
+GET /orders/{order_id}/items/{item_id} - Returns the Order Item with a given id number
+POST /orders/{order_id}/items - creates a new Order Item record in the database
+PUT /orders/{order_id}/items/{item_id} - updates an Order Item record in the database
+DELETE /orders/{order_id}/items/{item_id} - deletes an Order Item record in the database
 """
 
 from flask import jsonify
@@ -109,6 +122,7 @@ class OrderResource(Resource):
     # ------------------------------------------------------------------
     # RETRIEVE AN ORDER
     # ------------------------------------------------------------------
+    @api.doc('get_orders')
     @api.response(404, 'Order not found')
     @api.marshal_with(order_model)
     def get(self, order_id):
@@ -127,6 +141,7 @@ class OrderResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE AN EXISTING ORDER
     # ------------------------------------------------------------------
+    @api.doc('update_orders')
     @api.response(404, 'Order not found')
     @api.response(400, 'The posted Order data was not valid')
     @api.expect(order_model)
@@ -155,6 +170,7 @@ class OrderResource(Resource):
     # ------------------------------------------------------------------
     # DELETE AN ORDER
     # ------------------------------------------------------------------
+    @api.doc('delete_orders')
     @api.response(204, 'Order deleted')
     def delete(self, order_id):
         """
@@ -179,6 +195,7 @@ class OrderCollection(Resource):
     # ------------------------------------------------------------------
     # LIST ALL ORDERS
     # ------------------------------------------------------------------
+    @api.doc('list_orders')
     @api.response(400, 'Invalid order status')
     @api.expect(order_args, validate=True)
     @api.marshal_list_with(order_model)
@@ -209,6 +226,7 @@ class OrderCollection(Resource):
     # ------------------------------------------------------------------
     # ADD A NEW ORDER
     # ------------------------------------------------------------------
+    @api.doc('create_orders')
     @api.response(400, 'The posted data was not valid')
     @api.expect(order_create_model)
     @api.marshal_with(order_model, code=201)
@@ -234,6 +252,7 @@ class OrderCollection(Resource):
 @api.param('order_id', 'The Order identifier')
 class CancelOrderResource(Resource):
     """ Cancel action on an Order """
+    @api.doc('cancel_orders')
     @api.response(404, 'Order not found')
     @api.response(409, 'Order cannot be cancelled')
     def put(self, order_id):
@@ -280,8 +299,9 @@ class OrderItemResource(Resource):
     # ------------------------------------------------------------------
     # RETRIEVE AN ORDER ITEM
     # ------------------------------------------------------------------
-    @api.marshal_with(item_model)
+    @api.doc('get_order_items')
     @api.response(404, 'Order Item not found')
+    @api.marshal_with(item_model)
     def get(self, order_id, item_id):
         """
         Retrieve an order item
@@ -307,6 +327,7 @@ class OrderItemResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE AN EXISTING ORDER ITEM
     # ------------------------------------------------------------------
+    @api.doc('update_order_items')
     @api.response(404, 'Order Item not found')
     @api.response(400, 'The posted Order Item data was not valid')
     @api.expect(item_model)
@@ -339,6 +360,7 @@ class OrderItemResource(Resource):
     # ------------------------------------------------------------------
     # DELETE AN ORDER ITEM
     # ------------------------------------------------------------------
+    @api.doc('delete_order_items')
     @api.response(204, 'Order Item deleted')
     def delete(self, order_id, item_id):
         """
@@ -369,6 +391,7 @@ class OrderItemCollection(Resource):
     # ------------------------------------------------------------------
     # LIST ALL ITEMS FOR AN ORDER
     # ------------------------------------------------------------------
+    @api.doc('list_order_items')
     @api.marshal_list_with(item_model)
     def get(self, order_id):
         """List all of the Items from an Order"""
@@ -384,6 +407,7 @@ class OrderItemCollection(Resource):
     # ------------------------------------------------------------------
     # ADD A NEW ITEM TO AN ORDER
     # ------------------------------------------------------------------
+    @api.doc('create_order_items')
     @api.response(400, 'The posted data was not valid')
     @api.expect(item_create_model)
     @api.marshal_with(item_model, code=201)

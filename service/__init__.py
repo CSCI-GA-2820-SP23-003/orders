@@ -25,7 +25,7 @@ api = Api(
     app,
     version='1.0.0',
     title='Orders REST API Service',
-    description='This is Orders Microservice for an E-commerce app.',
+    description='This is Orders Microservice for an E-commerce application.',
     default='orders',
     default_label='Orders Microservice',
     doc='/apidocs',
