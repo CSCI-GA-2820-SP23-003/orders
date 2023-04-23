@@ -269,7 +269,7 @@ class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Double, nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
     created_on = db.Column(db.Date(), nullable=False, default=date.today())
     updated_on = db.Column(db.Date(), nullable=False, default=date.today())

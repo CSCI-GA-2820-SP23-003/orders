@@ -15,7 +15,7 @@ ID_PREFIX = "order_"
 def step_impl(context):
     """ Delete all Orders and load new ones """
     # List all of the orders and delete them one by one
-    rest_endpoint = f"{context.BASE_URL}/orders"
+    rest_endpoint = f"{context.BASE_URL}/api/orders"
     context.resp = requests.get(rest_endpoint)
     expect(context.resp.status_code).to_equal(200)
     for order in context.resp.json():

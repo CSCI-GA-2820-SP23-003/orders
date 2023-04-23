@@ -13,7 +13,7 @@ Background:
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Order Demo RESTful Service" in the title
+    Then I should see "Orders RESTful Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create an Order
@@ -142,7 +142,7 @@ Scenario: Delete an Order
     And I press the "Delete" button
     Then I should see the message "Order has been Deleted!"
     When I press the "Retrieve" button
-    Then I should see the message "404 Not Found"
+    Then I should see the message "not found"
     And the "Customer ID" field should be empty
     And the "Created On" field should be empty
     And the "Updated On" field should be empty
