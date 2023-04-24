@@ -276,7 +276,9 @@ $(function () {
             data: JSON.stringify(data),
         });
 
+        console.log("Item created");
         ajax.done(function (res) {
+            console.log("Item created!!");
             update_form_data(res)
             flash_message("Success")
         });
