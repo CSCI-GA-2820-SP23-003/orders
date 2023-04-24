@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions
 
 ID_PREFIX = "order_"
 
+
 @given('the following orders')
 def step_impl(context):
     """ Delete all Orders and load new ones """
@@ -29,6 +30,26 @@ def step_impl(context):
             "status": row['Status'],
         }
         context.resp = requests.post(rest_endpoint, json=payload)
+        expect(context.resp.status_code).to_equal(201)
+
+
+@given('the following items')
+def step_impl(context):
+    """ Delete all Orders and load new ones """
+    # Get the first order
+    rest_endpoint = f"{context.BASE_URL}/api/orders"
+    context.resp = requests.get(rest_endpoint)
+    expect(context.resp.status_code).to_equal(200)
+    order = context.resp.json()[0]
+    items_route = f"{rest_endpoint}/{order['id']}/items"
+    # load the database with one new order
+    for row in context.table:
+        payload = {
+            "product_id": row['Product ID'],
+            "price": row['Price'],
+            "quantity": row['Quantity']
+        }
+        context.resp = requests.post(items_route, json=payload)
         expect(context.resp.status_code).to_equal(201)
 
 
@@ -84,6 +105,16 @@ def step_impl(context, order_status):
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
             (By.ID, 'search_results'),
+            order_status
+        )
+    )
+    expect(found).to_be(True)
+    
+@then('I should see "{order_status}" in the list items results')
+def step_impl(context, order_status):
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'list_item_results'),
             order_status
         )
     )
@@ -145,7 +176,7 @@ def step_impl(context, element_name):
     )
     context.clipboard = element.get_attribute('value')
     logging.info('Clipboard contains: %s', context.clipboard)
-    
+
 
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
