@@ -15,9 +15,9 @@ Feature: The order service back-end
         And I press the "Create" button
         Then I should see the message "Success"
         When I copy the "ID" field
-        And I paste the item "Order ID" field
-        And I set the item "Product ID" to "1"
-        And I set the item "Price" to "5"
-        And I set the item "Quantity" to "3"
-        And I press the item "Create" button
+        And I paste the "Order ID" field
+        And I set the "Product ID" to "1"
+        And I set the "Price" to "5"
+        And I set the "Quantity" to "3"
+        And I press the "Create Item" button
         Then I should see the message "Success"

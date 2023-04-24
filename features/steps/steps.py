@@ -9,9 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-ORDER_ID_PREFIX = "order_"
-ITEM_ID_PREFIX = "item_"
-
+ID_PREFIX = "order_"
 
 @given('the following orders')
 def step_impl(context):
@@ -55,14 +53,7 @@ def step_impl(context, text_string):
 
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
-    element = context.driver.find_element_by_id(element_id)
-    element.clear()
-    element.send_keys(text_string)
-    
-@when('I set the item "{element_name}" to "{text_string}"')
-def step_impl(context, element_name, text_string):
-    element_id = ITEM_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = context.driver.find_element_by_id(element_id)
     element.clear()
     element.send_keys(text_string)
@@ -70,26 +61,21 @@ def step_impl(context, element_name, text_string):
 
 @when('I select "{text}" in the "{element_name}" dropdown')
 def step_impl(context, text, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = Select(context.driver.find_element_by_id(element_id))
     element.select_by_visible_text(text)
 
 
 @then('I should see "{text}" in the "{element_name}" dropdown')
 def step_impl(context, text, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = Select(context.driver.find_element_by_id(element_id))
     expect(element.first_selected_option.text).to_equal(text)
 
 
 @when('I press the "{button}" button')
 def step_impl(context, button):
-    button_id = button.lower() + '-btn'
-    context.driver.find_element_by_id(button_id).click()
-    
-@when('I press the item "{button}" button')
-def step_impl(context, button):
-    button_id = button.lower() + '-item-btn'
+    button_id = button.lower().replace(' ', '-') + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
 
@@ -119,9 +105,10 @@ def step_impl(context, message):
     )
     expect(found).to_be(True)
 
+
 @then('I should see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     if text_string == "Today's date":
         text_string = date.today().isoformat()
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
@@ -133,7 +120,7 @@ def step_impl(context, text_string, element_name):
 
 @then('I should not see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = context.driver.find_element_by_id(element_id)
     error_msg = "I should not see '%s' in '%s'" % (text_string, element.text)
     ensure(text_string in element.text, False, error_msg)
@@ -141,7 +128,7 @@ def step_impl(context, text_string, element_name):
 
 @then('the "{element_name}" field should be empty')
 def step_impl(context, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = context.driver.find_element_by_id(element_id)
     expect(element.get_attribute('value')).to_be(u'')
 
@@ -152,7 +139,7 @@ def step_impl(context, element_name):
 
 @when('I copy the "{element_name}" field')
 def step_impl(context, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
@@ -162,16 +149,7 @@ def step_impl(context, element_name):
 
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
-    element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-        expected_conditions.presence_of_element_located((By.ID, element_id))
-    )
-    element.clear()
-    element.send_keys(context.clipboard)
-    
-@when('I paste the item "{element_name}" field')
-def step_impl(context, element_name):
-    element_id = ITEM_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
@@ -181,7 +159,7 @@ def step_impl(context, element_name):
 
 @when('I change "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = ORDER_ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
