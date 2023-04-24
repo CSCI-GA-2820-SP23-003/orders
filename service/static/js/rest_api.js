@@ -256,10 +256,10 @@ $(function () {
     // ****************************************
 
     $("#create-item-btn").click(function () {
-        let product_id = $("#item_product_id").val();
-        let quantity = $("#item_quantity").val();
-        let order_id = $("#item_order_id").val();
-        let price = $("#item_price").val();
+        let product_id = $("#order_product_id").val();
+        let quantity = $("#order_quantity").val();
+        let order_id = $("#order_order_id").val();
+        let price = $("#order_price").val();
 
         let data = {
             "product_id": product_id,
