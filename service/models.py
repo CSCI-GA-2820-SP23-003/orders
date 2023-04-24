@@ -132,7 +132,7 @@ class Order(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.customer_id = data["customer_id"]
+            self.customer_id = int(data["customer_id"])
             if "status" in data:
                 self.status = getattr(OrderStatus, data["status"])
             else:
@@ -154,6 +154,8 @@ class Order(db.Model):
                 "Invalid Order: body of request contained bad or no data - "
                 "Error message: " + str(error)
             ) from error
+        except ValueError as error:
+            raise DataValidationError("Invalid customer_id: number required") from error
         return self
 
     ##################################################
@@ -335,9 +337,24 @@ class OrderItem(db.Model):
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid Order: body of request contained bad or no data - "
+                "Invalid Order Item: body of request contained bad or no data - "
                 "Error message: " + str(error)
             ) from error
+
+        try:
+            self.product_id = int(self.product_id)
+        except ValueError as error:
+            raise DataValidationError("Invalid product_id: number required") from error
+
+        try:
+            self.quantity = int(self.quantity)
+        except ValueError as error:
+            raise DataValidationError("Invalid quantity: number required") from error
+
+        try:
+            self.price = float(self.price)
+        except ValueError as error:
+            raise DataValidationError("Invalid price: number required") from error
         return self
 
     ##################################################

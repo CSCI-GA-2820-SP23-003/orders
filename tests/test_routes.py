@@ -343,6 +343,15 @@ class TestOrderService(TestCase):
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_create_order_bad_customer_id(self):
+        """It should not Create an Order with bad customer id"""
+        order = OrderFactory()
+        # change customer id to a bad string
+        test_order = order.serialize()
+        test_order["customer_id"] = "abcd"  # wrong value
+        response = self.app.post(BASE_URL, json=test_order)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_query_order_list_by_bad_status(self):
         """It should not Query Orders by bad status"""
         bad_status = "unknown"
@@ -675,6 +684,48 @@ class TestOrderService(TestCase):
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_item_bad_product_id(self):
+        """It should not Create an Order Item with bad product id"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        # change product id to a bad string
+        test_item = item.serialize()
+        test_item["product_id"] = "abcd"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_item_bad_quantity(self):
+        """It should not Create an Order Item with bad quantity"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        # change product id to a bad string
+        test_item = item.serialize()
+        test_item["quantity"] = "abcd"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_item_bad_price(self):
+        """It should not Create an Order Item with bad price"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        # change product id to a bad string
+        test_item = item.serialize()
+        test_item["price"] = "abcd"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_item_bad_data(self):
+        """It should not Create an Order Item with bad data"""
+        order = self._create_orders(1)[0]
+        item = OrderItemFactory()
+        # change product id to a bad string
+        test_item = item.serialize()
+        test_item["product_id"] = "abcd"  # wrong value
+        test_item["quantity"] = "abcd"  # wrong value
+        test_item["price"] = "abcd"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_item_item_not_found(self):
         """
