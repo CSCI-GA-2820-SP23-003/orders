@@ -222,6 +222,14 @@ class TestOrderModel(unittest.TestCase):
         order = Order()
         self.assertRaises(DataValidationError, order.deserialize, data)
 
+    def test_deserialize_bad_customer_id(self):
+        """ Deserialize an order with a ValueError """
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data['customer_id'] = "abcd"  # wrong value
+        order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
     def test_find_order(self):
         """It should Find an Order by ID"""
         orders = OrderFactory.create_batch(5)
@@ -608,6 +616,30 @@ class TestOrderItemModel(unittest.TestCase):
         """ Deserialize an order item with a TypeError """
         item = OrderItem()
         self.assertRaises(DataValidationError, item.deserialize, [])
+
+    def test_deserialize_bad_product_id(self):
+        """ Deserialize an order item with a ValueError """
+        test_order_item = OrderItemFactory()
+        data = test_order_item.serialize()
+        data['product_id'] = "abcd"  # wrong value
+        order_item = OrderItem()
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+    def test_deserialize_bad_quantity(self):
+        """ Deserialize an order item with a ValueError """
+        test_order_item = OrderItemFactory()
+        data = test_order_item.serialize()
+        data['quantity'] = "abcd"  # wrong value
+        order_item = OrderItem()
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+    def test_deserialize_bad_price(self):
+        """ Deserialize an order item with a ValueError """
+        test_order_item = OrderItemFactory()
+        data = test_order_item.serialize()
+        data['price'] = "abcd"  # wrong value
+        order_item = OrderItem()
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
 
     def test_find_order_item(self):
         """It should Find an Order Item by ID"""

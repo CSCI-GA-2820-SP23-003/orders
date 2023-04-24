@@ -40,7 +40,7 @@ item_model = api.inherit(
     'Item',
     item_create_model,
     {
-        'order_id': fields.Integer(required=True,
+        'order_id': fields.Integer(readOnly=True,
                                    description='The order in which the product was purchased'),
         'id': fields.Integer(readOnly=True,
                              description='The unique id assigned internally by service'),
