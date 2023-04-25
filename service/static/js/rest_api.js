@@ -381,13 +381,12 @@ $(function () {
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/api/orders/" + order_id + "/items/" + item_id,
+            url: `/api/orders/${order_id}/items/${item_id}`,
             contentType: "application/json",
             data: ''
         })
 
         ajax.done(function (res) {
-            //alert(res.toSource())
             update_item_form_data(res)
             flash_message("Success")
         });
