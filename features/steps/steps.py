@@ -99,7 +99,7 @@ def step_impl(context, button):
     button_id = button.lower().replace(' ', '-') + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
-    
+
 @then('I should see "{status}" in the "{tablename}" results')
 def step_impl(context, status, tablename):
     tablename = tablename.lower().replace(' ', '_') + '_results'

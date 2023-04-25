@@ -68,7 +68,7 @@ Feature: The order service back-end
         And I should see "17" in the "List Item" results
         And I should not see "31" in the "List Item" results
         And I should not see "42" in the "List Item" results
-
+        
     Scenario: Retrieve an Item
         When I visit the "Home Page"
         And I press the "Search" button
@@ -84,3 +84,16 @@ Feature: The order service back-end
         And I should see "233" in the "Product ID" field
         And I should see "3" in the "Price" field
         And I should see "4" in the "Quantity" field
+        
+    Scenario: Delete an Item
+        When I visit the "Home Page"
+        And I press the "Clear" button
+        And I press the "Search" button
+        Then I should see the message "Success"
+        When I press the "Clear Item" button
+        Then the "Item ID" field should be empty
+        And I should see "233" in the "List Item" results
+        When I press the "Delete Item" button
+        And I paste the "Order ID" field
+        And I press the "List Item" button
+        Then I should not see "233" in the "List Item" results
