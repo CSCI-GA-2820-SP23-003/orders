@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions
 
 ID_PREFIX = "order_"
 
+
 @given('the following orders')
 def step_impl(context):
     """ Delete all Orders and load new ones """
@@ -29,6 +30,26 @@ def step_impl(context):
             "status": row['Status'],
         }
         context.resp = requests.post(rest_endpoint, json=payload)
+        expect(context.resp.status_code).to_equal(201)
+
+
+@given('the following items')
+def step_impl(context):
+    """ Load all items to the first order """
+    # Get the first order
+    rest_endpoint = f"{context.BASE_URL}/api/orders"
+    context.resp = requests.get(rest_endpoint)
+    expect(context.resp.status_code).to_equal(200)
+    order = context.resp.json()[0]
+    items_route = f"{rest_endpoint}/{order['id']}/items"
+    # Add the new items in the table
+    for row in context.table:
+        payload = {
+            "product_id": row['Product ID'],
+            "price": row['Price'],
+            "quantity": row['Quantity']
+        }
+        context.resp = requests.post(items_route, json=payload)
         expect(context.resp.status_code).to_equal(201)
 
 
@@ -78,23 +99,25 @@ def step_impl(context, button):
     button_id = button.lower().replace(' ', '-') + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
-
-@then('I should see "{order_status}" in the results')
-def step_impl(context, order_status):
+    
+@then('I should see "{status}" in the "{tablename}" results')
+def step_impl(context, status, tablename):
+    tablename = tablename.lower().replace(' ', '_') + '_results'
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
-            (By.ID, 'search_results'),
-            order_status
+            (By.ID, tablename),
+            status
         )
     )
     expect(found).to_be(True)
 
 
-@then('I should not see "{order_status}" in the results')
-def step_impl(context, order_status):
-    element = context.driver.find_element_by_id('search_results')
-    error_msg = "I should not see '%s' in '%s'" % (order_status, element.text)
-    ensure(order_status in element.text, False, error_msg)
+@then('I should not see "{status}" in the "{tablename}" results')
+def step_impl(context, status, tablename):
+    tablename = tablename.lower().replace(' ', '_') + '_results'
+    element = context.driver.find_element_by_id(tablename)
+    error_msg = "I should not see '%s' in '%s'" % (status, element.text)
+    ensure(status in element.text, False, error_msg)
 
 
 @then('I should see the message "{message}"')
@@ -145,7 +168,7 @@ def step_impl(context, element_name):
     )
     context.clipboard = element.get_attribute('value')
     logging.info('Clipboard contains: %s', context.clipboard)
-    
+
 
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
