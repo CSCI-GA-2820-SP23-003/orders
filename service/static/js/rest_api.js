@@ -406,4 +406,32 @@ $(function () {
         });
 
     });
+
+    // ****************************************
+    // Delete an Item
+    // ****************************************
+
+    $("#delete-item-btn").click(function () {
+        let order_id = $("#order_id").val();
+        let item_id = $("#order_item_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `/api/orders/${order_id}/items/${item_id}`,
+            contentType: "application/json"
+        })
+
+        ajax.done(function (res) {
+            // remove the order from the form and table
+            clear_item_form_data();
+            flash_message("Item has been Deleted!")
+        });
+
+        ajax.fail(function (res) {
+            clear_item_form_data();
+            flash_message(res.responseJSON.message)
+        });
+    });
 })
