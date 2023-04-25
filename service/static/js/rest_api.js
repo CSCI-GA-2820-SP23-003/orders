@@ -397,7 +397,7 @@ $(function () {
         })
 
         ajax.done(function (res) {
-            update_form_data(res)
+            update_item_form_data(res)
             flash_message("Success")
         });
 
