@@ -16,7 +16,9 @@ $(function () {
     function update_item_form_data(res) {
         $("#order_item_id").val(res.id);
         $("#order_product_id").val(res.product_id);
-        $("#order_status").val(res.status);
+        $("#order_price").val(res.pricee);
+        $("#order_quantity").val(res.quantity);
+        $("#order_order_id").val(res.order_id);
         $("#order_created_on").val(res.created_on);
         $("#order_updated_on").val(res.updated_on);
     }
