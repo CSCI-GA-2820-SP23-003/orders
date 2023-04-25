@@ -38,7 +38,8 @@ Feature: The order service back-end
         And I press the "Search" button
         Then I should see the message "Success"
         When I press the "Clear Item" button
-        And I copy the "ID" field
+        Then the "Item ID" field should be empty
+        When I copy the "ID" field
         And I paste the "Order ID" field
         And I press the "List Item" button
         Then I should see the message "Success"
