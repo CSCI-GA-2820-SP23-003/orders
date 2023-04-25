@@ -16,7 +16,9 @@ $(function () {
     function update_item_form_data(res) {
         $("#order_item_id").val(res.id);
         $("#order_product_id").val(res.product_id);
-        $("#order_status").val(res.status);
+        $("#order_price").val(res.price);
+        $("#order_quantity").val(res.quantity);
+        $("#order_order_id").val(res.order_id);
         $("#order_created_on").val(res.created_on);
         $("#order_updated_on").val(res.updated_on);
     }
@@ -366,5 +368,42 @@ $(function () {
     $("#clear-item-btn").click(function () {
         $("#flash_message").empty();
         clear_item_form_data()
+    });
+
+    // ****************************************
+    // Update an Item
+    // ****************************************
+
+    $("#update-item-btn").click(function () {
+
+        let order_id = $("#order_order_id").val();
+        let item_id = $("#order_item_id").val();
+        let price = $("#order_price").val();
+        let quantity = $("#order_quantity").val();
+        let product_id = $("#order_product_id").val();
+        let data = {
+            "price": price,
+            "quantity": quantity,
+            "product_id": product_id
+        };
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/api/orders/${order_id}/items/${item_id}`,
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        })
+
+        ajax.done(function (res) {
+            update_item_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+
     });
 })
