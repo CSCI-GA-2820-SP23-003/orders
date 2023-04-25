@@ -43,7 +43,7 @@ Feature: The order service back-end
         And I press the "Clear" button
         And I press the "Search" button
         Then I should see the message "Success"
-        And I should see "CONFIRMED" in the results
+        And I should see "CONFIRMED" in the "Search" results
         When I copy the "ID" field
         And I press the "Clear" button
         Then the "ID" field should be empty
@@ -63,17 +63,17 @@ Feature: The order service back-end
         And I press the "Clear" button
         And I press the "Search" button
         Then I should see the message "Success"
-        And I should see "CONFIRMED" in the results
-        And I should see "SHIPPED" in the results
-        And I should see "DELIVERED" in the results
-        And I should see "CANCELLED" in the results
-        And I should not see "IN_PROGRESS" in the results
+        And I should see "CONFIRMED" in the "Search" results
+        And I should see "SHIPPED" in the "Search" results
+        And I should see "DELIVERED" in the "Search" results
+        And I should see "CANCELLED" in the "Search" results
+        And I should not see "IN_PROGRESS" in the "Search" results
 
     Scenario: Update an Order
         When I visit the "Home Page"
         And I press the "Search" button
         Then I should see the message "Success"
-        And I should see "CONFIRMED" in the results
+        And I should see "CONFIRMED" in the "Search" results
         When I copy the "ID" field
         And I press the "Clear" button
         Then the "ID" field should be empty
@@ -153,10 +153,10 @@ Feature: The order service back-end
         And I press the "Search" button
         Then I should see the message "Success"
         And I should see "5" in the "Customer ID" field
-        And I should see "CONFIRMED" in the results
-        And I should not see "SHIPPED" in the results
-        And I should not see "DELIVERED" in the results
-        And I should not see "CANCELLED" in the results
+        And I should see "CONFIRMED" in the "Search" results
+        And I should not see "SHIPPED" in the "Search" results
+        And I should not see "DELIVERED" in the "Search" results
+        And I should not see "CANCELLED" in the "Search" results
         And I should not see "9" in the "Customer ID" field
         And I should not see "2" in the "Customer ID" field
 
@@ -165,8 +165,8 @@ Feature: The order service back-end
         And I select "Shipped" in the "Status" dropdown
         And I press the "Search" button
         Then I should see the message "Success"
-        And I should see "SHIPPED" in the results
-        And I should not see "CONFIRMED" in the results
-        And I should not see "DELIVERED" in the results
-        And I should not see "CANCELLED" in the results
-        And I should not see "IN_PROGRESS" in the results
+        And I should see "SHIPPED" in the "Search" results
+        And I should not see "CONFIRMED" in the "Search" results
+        And I should not see "DELIVERED" in the "Search" results
+        And I should not see "CANCELLED" in the "Search" results
+        And I should not see "IN_PROGRESS" in the "Search" results

@@ -35,14 +35,14 @@ def step_impl(context):
 
 @given('the following items')
 def step_impl(context):
-    """ Delete all Orders and load new ones """
+    """ Load all items to the first order """
     # Get the first order
     rest_endpoint = f"{context.BASE_URL}/api/orders"
     context.resp = requests.get(rest_endpoint)
     expect(context.resp.status_code).to_equal(200)
     order = context.resp.json()[0]
     items_route = f"{rest_endpoint}/{order['id']}/items"
-    # load the database with one new order
+    # Add the new items in the table
     for row in context.table:
         payload = {
             "product_id": row['Product ID'],
@@ -99,33 +99,25 @@ def step_impl(context, button):
     button_id = button.lower().replace(' ', '-') + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
-
-@then('I should see "{order_status}" in the results')
-def step_impl(context, order_status):
-    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-        expected_conditions.text_to_be_present_in_element(
-            (By.ID, 'search_results'),
-            order_status
-        )
-    )
-    expect(found).to_be(True)
     
-@then('I should see "{order_status}" in the list items results')
-def step_impl(context, order_status):
+@then('I should see "{status}" in the "{tablename}" results')
+def step_impl(context, status, tablename):
+    tablename = tablename.lower().replace(' ', '_') + '_results'
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
-            (By.ID, 'list_item_results'),
-            order_status
+            (By.ID, tablename),
+            status
         )
     )
     expect(found).to_be(True)
 
 
-@then('I should not see "{order_status}" in the results')
-def step_impl(context, order_status):
-    element = context.driver.find_element_by_id('search_results')
-    error_msg = "I should not see '%s' in '%s'" % (order_status, element.text)
-    ensure(order_status in element.text, False, error_msg)
+@then('I should not see "{status}" in the "{tablename}" results')
+def step_impl(context, status, tablename):
+    tablename = tablename.lower().replace(' ', '_') + '_results'
+    element = context.driver.find_element_by_id(tablename)
+    error_msg = "I should not see '%s' in '%s'" % (status, element.text)
+    ensure(status in element.text, False, error_msg)
 
 
 @then('I should see the message "{message}"')

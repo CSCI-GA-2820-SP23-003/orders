@@ -37,10 +37,11 @@ Feature: The order service back-end
         And I press the "Clear" button
         And I press the "Search" button
         Then I should see the message "Success"
-        When I copy the "ID" field
+        When I press the "Clear Item" button
+        And I copy the "ID" field
         And I paste the "Order ID" field
         And I press the "List Item" button
         Then I should see the message "Success"
-        And I should see "233" in the list items results
-        And I should see "101" in the list items results
-        And I should see "151" in the list items results
+        And I should see "233" in the "List Item" results
+        And I should see "101" in the "List Item" results
+        And I should see "151" in the "List Item" results

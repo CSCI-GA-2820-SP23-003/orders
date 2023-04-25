@@ -12,12 +12,32 @@ $(function () {
         $("#order_updated_on").val(res.updated_on);
     }
 
+    // Updates the form with data from the response for the item section
+    function update_item_form_data(res) {
+        $("#order_item_id").val(res.id);
+        $("#order_product_id").val(res.product_id);
+        $("#order_status").val(res.status);
+        $("#order_created_on").val(res.created_on);
+        $("#order_updated_on").val(res.updated_on);
+    }
+
     // Clears all form fields
     function clear_form_data() {
         $("#order_customer_id").val("");
         $("#order_status").val("");
         $("#order_created_on").val("");
         $("#order_updated_on").val("");
+    }
+
+    // Clears all item form fields
+    function clear_item_form_data() {
+        $("#order_item_id").val("");
+        $("#order_product_id").val("");
+        $("#order_price").val("");
+        $("#order_quantity").val("");
+        $("#order_order_id").val("");
+        $("#order_item_created_on").val("");
+        $("#order_item_updated_on").val("");
     }
 
     // Updates the flash message area
@@ -277,7 +297,7 @@ $(function () {
         });
 
         ajax.done(function (res) {
-            update_form_data(res)
+            update_item_form_data(res)
             flash_message("Success")
         });
 
@@ -327,7 +347,7 @@ $(function () {
 
             // copy the first result to the form
             if (firstItem != "") {
-                update_form_data(firstItem)
+                update_item_form_data(firstItem)
             }
 
             flash_message("Success")
@@ -337,5 +357,14 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
 
+    });
+
+    // ****************************************
+    // Clear the item form
+    // ****************************************
+
+    $("#clear-item-btn").click(function () {
+        $("#flash_message").empty();
+        clear_item_form_data()
     });
 })
