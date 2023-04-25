@@ -371,6 +371,35 @@ $(function () {
     });
 
     // ****************************************
+    // Retrieve an Item
+    // ****************************************
+
+    $("#retrieve-item-btn").click(function () {
+
+        let item_id = $("#order_item_id").val();
+        let order_id = $("#order_order_id").val();
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/api/orders/" + order_id + "/items/" + item_id,
+            contentType: "application/json",
+            data: ''
+        })
+
+        ajax.done(function (res) {
+            //alert(res.toSource())
+            update_item_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            clear_item_form_data()
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+    
+    // ****************************************
     // Update an Item
     // ****************************************
 
