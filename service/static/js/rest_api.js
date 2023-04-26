@@ -140,7 +140,6 @@ $(function () {
         })
 
         ajax.done(function (res) {
-
             $("#search_results").empty();
             let table = '<table class="table table-striped" cellpadding="10">'
             table += '<thead><tr>'
