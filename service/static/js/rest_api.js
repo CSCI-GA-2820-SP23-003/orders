@@ -116,6 +116,7 @@ $(function () {
 
         let customer_id = $("#order_customer_id").val();
         let status = $("#order_status").val();
+        let product_id = $("#order_search_product_id").val();
 
         let queryString = "";
 
@@ -123,6 +124,8 @@ $(function () {
             queryString += 'customer_id=' + customer_id;
         } else if (status) {
             queryString += 'status=' + status;
+        } else if (product_id) {
+            queryString += 'product_id=' + product_id;
         }
 
         $("#flash_message").empty();
@@ -135,19 +138,26 @@ $(function () {
         })
 
         ajax.done(function (res) {
+
             $("#search_results").empty();
             let table = '<table class="table table-striped" cellpadding="10">'
             table += '<thead><tr>'
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Customer ID</th>'
             table += '<th class="col-md-2">Status</th>'
+            table += '<th class="col-md-2">Product ID</th>'
             table += '<th class="col-md-2">Created On</th>'
             table += '<th class="col-md-2">Updated On</th>'
             table += '</tr></thead><tbody>'
             let firstOrder = "";
             for (let i = 0; i < res.length; i++) {
                 let order = res[i];
-                table += `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
+                let item_ids = []
+                for (let j = 0; j < order.items.length; j++) {
+                    let item = order.items[j];
+                    item_ids.push(item.product_id);
+                }
+                table += `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${item_ids}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
                 if (i == 0) {
                     firstOrder = order;
                 }
@@ -397,7 +407,7 @@ $(function () {
         });
 
     });
-    
+
     // ****************************************
     // Update an Item
     // ****************************************

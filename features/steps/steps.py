@@ -8,6 +8,7 @@ from compare import expect, ensure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions
+import re
 
 ID_PREFIX = "order_"
 
@@ -99,19 +100,43 @@ def step_impl(context, button):
     button_id = button.lower().replace(' ', '-') + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
+def get_column_values(context, tablename, column_name):
+    tablename = tablename.lower().replace(' ', '_') + '_results'
+    element = context.driver.find_element_by_id(tablename)
 
-@then('I should see "{status}" in the "{tablename}" results')
-def step_impl(context, status, tablename):
+    # Get the index of the column with the specified name
+    headers = element.find_elements_by_tag_name('th')
+    column_index = -1
+    for i, header in enumerate(headers):
+        if header.text.strip() == column_name:
+            column_index = i
+            break
+
+    # Check if the column with the specified name was found
+    assert column_index != -1, f'Column with name "{column_name}" not found in table'
+    return [row.find_elements_by_tag_name('td')[column_index].text for row in element.find_elements_by_tag_name('tr')[1:]]
+
+@then('I should see "{value}" in every row of column "{column_name}" in "{tablename}" results')
+def step_impl(context, value, column_name, tablename):
+    cell_values = get_column_values(context, tablename, column_name)
+    expect(all([value in cell.split(',') if ',' in cell else value == cell for cell in cell_values])).to_be(True)
+
+@then('I should not see "{value}" in every row of column "{column_name}" in "{tablename}" results')
+def step_impl(context, value, column_name, tablename):
+    cell_values = get_column_values(context, tablename, column_name)
+    expect(any([value in cell.split(',') if ',' in cell else value == cell for cell in cell_values])).to_be(False)
+    
+@then('I should see "{value}" in the "{tablename}" results')
+def step_impl(context, value, tablename):
     tablename = tablename.lower().replace(' ', '_') + '_results'
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
             (By.ID, tablename),
-            status
+            value
         )
     )
     expect(found).to_be(True)
-
-
+    
 @then('I should not see "{status}" in the "{tablename}" results')
 def step_impl(context, status, tablename):
     tablename = tablename.lower().replace(' ', '_') + '_results'

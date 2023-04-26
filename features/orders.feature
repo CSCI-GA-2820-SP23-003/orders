@@ -10,6 +10,12 @@ Feature: The order service back-end
             | 9           | SHIPPED   |
             | 2           | DELIVERED |
             | 2           | CANCELLED |
+        Given the following items:
+            | Product ID | Price | Quantity |
+            | 233        | 31    | 42       |
+            | 101        | 7     | 8        |
+            | 151        | 11    | 12       |
+
 
     Scenario: The server is running
         When I visit the "Home Page"
@@ -170,3 +176,15 @@ Feature: The order service back-end
         And I should not see "DELIVERED" in the "Search" results
         And I should not see "CANCELLED" in the "Search" results
         And I should not see "IN_PROGRESS" in the "Search" results
+
+    Scenario: Search for Product ID
+        When I visit the "Home Page"
+        And I press the "Clear" button
+        And I set the "Search Product ID" to "233"
+        And I press the "Search" button
+        Then I should see the message "Success"
+        And I should see "233" in every row of column "Product ID" in "Search" results
+        And I should see "5" in every row of column "Customer ID" in "Search" results
+        And I should see "CONFIRMED" in every row of column "Status" in "Search" results
+        And I should not see "2" in every row of column "Customer ID" in "Search" results
+        And I should not see "9" in every row of column "Customer ID" in "Search" results
