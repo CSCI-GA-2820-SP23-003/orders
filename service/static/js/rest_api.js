@@ -116,6 +116,7 @@ $(function () {
 
         let customer_id = $("#order_customer_id").val();
         let status = $("#order_status").val();
+        let product_id = $("#order_search_product_id").val();
 
         let queryString = "";
 
@@ -123,6 +124,8 @@ $(function () {
             queryString += 'customer_id=' + customer_id;
         } else if (status) {
             queryString += 'status=' + status;
+        } else if (product_id) {
+            queryString += 'product_id=' + product_id;
         }
 
         $("#flash_message").empty();
@@ -141,13 +144,15 @@ $(function () {
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Customer ID</th>'
             table += '<th class="col-md-2">Status</th>'
+            table += '<th class="col-md-2">Product IDs</th>'
             table += '<th class="col-md-2">Created On</th>'
             table += '<th class="col-md-2">Updated On</th>'
             table += '</tr></thead><tbody>'
             let firstOrder = "";
             for (let i = 0; i < res.length; i++) {
                 let order = res[i];
-                table += `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
+                item_product_ids = order.items.map(item => item.product_id).join(',');
+                table += `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${item_product_ids}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
                 if (i == 0) {
                     firstOrder = order;
                 }
@@ -267,6 +272,7 @@ $(function () {
 
     $("#clear-btn").click(function () {
         $("#order_id").val("");
+        $("#order_search_product_id").val("");
         $("#flash_message").empty();
         clear_form_data()
     });
@@ -397,7 +403,7 @@ $(function () {
         });
 
     });
-    
+
     // ****************************************
     // Update an Item
     // ****************************************
