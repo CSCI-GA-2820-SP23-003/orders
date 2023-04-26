@@ -183,7 +183,7 @@ Feature: The order service back-end
         And I set the "Search Product ID" to "233"
         And I press the "Search" button
         Then I should see the message "Success"
-        And I should see "233" in every row of column "Product ID" in "Search" results
+        And I should see "233" in every row of column "Product IDs" in "Search" results
         And I should see "5" in every row of column "Customer ID" in "Search" results
         And I should see "CONFIRMED" in every row of column "Status" in "Search" results
         And I should not see "2" in every row of column "Customer ID" in "Search" results
