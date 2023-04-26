@@ -151,7 +151,7 @@ $(function () {
             let firstOrder = "";
             for (let i = 0; i < res.length; i++) {
                 let order = res[i];
-                item_product_ids = order.items.map(item => item.product_id).join(',')
+                item_product_ids = order.items.map(item => item.product_id).join(',');
                 table += `<tr id="row_${i}"><td>${order.id}</td><td>${order.customer_id}</td><td>${order.status}</td><td>${item_product_ids}</td><td>${order.created_on}</td><td>${order.updated_on}</td></tr>`;
                 if (i == 0) {
                     firstOrder = order;
