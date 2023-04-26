@@ -33,11 +33,9 @@ $(function () {
 
     // Clears all item form fields
     function clear_item_form_data() {
-        $("#order_item_id").val("");
         $("#order_product_id").val("");
         $("#order_price").val("");
         $("#order_quantity").val("");
-        $("#order_order_id").val("");
         $("#order_item_created_on").val("");
         $("#order_item_updated_on").val("");
     }
@@ -366,6 +364,8 @@ $(function () {
     // ****************************************
 
     $("#clear-item-btn").click(function () {
+        $("#order_item_id").val("");
+        $("#order_order_id").val("");
         $("#flash_message").empty();
         clear_item_form_data()
     });

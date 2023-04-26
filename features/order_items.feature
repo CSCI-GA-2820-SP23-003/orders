@@ -32,6 +32,24 @@ Feature: The order service back-end
         And I press the "Create Item" button
         Then I should see the message "Success"
 
+    Scenario: Retrieve an Item
+        When I visit the "Home Page"
+        And I press the "Search" button
+        Then I should see the message "Success"
+        And I should see "CONFIRMED" in the "Search" results
+        When I copy the "ID" field
+        And I paste the "Order ID" field
+        And I press the "List Item" button
+        Then I should see the message "Success"
+        And I should see "233" in the "Product ID" field
+        When I copy the "Item ID" field
+        And I paste the "Item ID" field
+        And I press the "Retrieve Item" button
+        Then I should see the message "Success"
+        And I should see "233" in the "Product ID" field
+        And I should see "3" in the "Price" field
+        And I should see "4" in the "Quantity" field
+
     Scenario: List Items
         When I visit the "Home Page"
         And I press the "Clear" button
@@ -71,33 +89,17 @@ Feature: The order service back-end
 
     Scenario: Delete an Item
         When I visit the "Home Page"
-        And I press the "Clear" button
-        And I press the "Search" button
-        Then I should see the message "Success"
-        When I press the "Clear Item" button
-        Then the "Item ID" field should be empty
-        When I copy the "ID" field
-        And I paste the "Order ID" field
-        And I press the "List Item" button
-        Then I should see the message "Success"
-        And I should see "233" in the "List Item" results
-        When I press the "Delete Item" button
-        And I paste the "Order ID" field
-        And I press the "List Item" button
-        Then I should not see "233" in the "List Item" results
-        
-    Scenario: Retrieve an Item
-        When I visit the "Home Page"
         And I press the "Search" button
         Then I should see the message "Success"
         When I copy the "ID" field
         And I paste the "Order ID" field
         And I press the "List Item" button
-        Then I should see the message "Success"
-        When I copy the "Item ID" field
-        And I paste the "Item ID" field
-        And I press the "Retrieve Item" button
         Then I should see the message "Success"
         And I should see "233" in the "Product ID" field
-        And I should see "3" in the "Price" field
-        And I should see "4" in the "Quantity" field
+        When I press the "Delete Item" button
+        Then I should see the message "Item has been Deleted!"
+        When I press the "Retrieve Item" button
+        Then I should see the message "not found"
+        And the "Product ID" field should be empty
+        And the "Price" field should be empty
+        And the "Quantity" field should be empty
