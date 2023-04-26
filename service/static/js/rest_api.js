@@ -8,6 +8,7 @@ $(function () {
         $("#order_id").val(res.id);
         $("#order_customer_id").val(res.customer_id);
         $("#order_status").val(res.status);
+        $("#order_search_product_id").val(order_search_product_id);
         $("#order_created_on").val(res.created_on);
         $("#order_updated_on").val(res.updated_on);
     }
@@ -27,6 +28,7 @@ $(function () {
     function clear_form_data() {
         $("#order_customer_id").val("");
         $("#order_status").val("");
+        $("#order_search_product_id").val("");
         $("#order_created_on").val("");
         $("#order_updated_on").val("");
     }
