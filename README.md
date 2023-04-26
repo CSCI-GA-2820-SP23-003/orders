@@ -439,7 +439,13 @@ Failure Response : `404 NOT FOUND`
   "status": 404
 }
 ```
+## Running BDD Tests Locally
 
+Follow these steps to run the BDD tests locally:
+
+1. Once the container is up and running, execute `honcho start`.
+2. Open another terminal window within the container and execute `behave`.
+3. The BDD tests should start running and displaying the results.
 
 ## License
 
