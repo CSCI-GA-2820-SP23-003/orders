@@ -144,7 +144,7 @@ $(function () {
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Customer ID</th>'
             table += '<th class="col-md-2">Status</th>'
-            table += '<th class="col-md-2">Product ID</th>'
+            table += '<th class="col-md-2">Product IDs</th>'
             table += '<th class="col-md-2">Created On</th>'
             table += '<th class="col-md-2">Updated On</th>'
             table += '</tr></thead><tbody>'
