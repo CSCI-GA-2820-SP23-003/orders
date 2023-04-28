@@ -12,10 +12,9 @@ from service.common import log_handlers
 
 # Create Flask application
 app = Flask(__name__)
-
 app.url_map.strict_slashes = False
-
 app.config.from_object(config)
+app.config['ERROR_404_HELP'] = False
 
 ######################################################################
 # Configure Swagger
