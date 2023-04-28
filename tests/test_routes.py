@@ -145,7 +145,7 @@ class TestOrderService(TestCase):
         response = self.app.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        self.assertIn("was not found", data["message"])
+        self.assertEqual(data["message"], "Order with id '0' was not found.")
 
     def test_list_orders(self):
         """ It should list orders"""
@@ -203,7 +203,7 @@ class TestOrderService(TestCase):
         response = self.app.put(f"{BASE_URL}/{test_order.id}", json=test_order.serialize())
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        self.assertIn(f"Order with id '{test_order.id}' was not found.", data["message"])
+        self.assertEqual(data["message"], f"Order with id '{test_order.id}' was not found.")
 
     def test_delete_order(self):
         """It should Delete an Order"""
@@ -433,7 +433,7 @@ class TestOrderService(TestCase):
         response = self.app.get(f"{BASE_URL}/0/items", content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        self.assertIn("was not found", data["message"])
+        self.assertEqual(data["message"], "Order with id '0' was not found.")
 
     def test_create_item(self):
         """It should Add an item to an order"""
@@ -525,14 +525,14 @@ class TestOrderService(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertIn(f"Item with id '{item_id_order_1}' was not found.", response.get_json()["message"])
+        self.assertEqual(response.get_json()["message"], f"Item with id '{item_id_order_1}' was not found.")
 
         response = self.app.get(
             f"{BASE_URL}/{orders[1].id}/items/{item_id_order_0}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertIn(f"Item with id '{item_id_order_0}' was not found.", response.get_json()["message"])
+        self.assertEqual(response.get_json()["message"], f"Item with id '{item_id_order_0}' was not found.")
 
         # Now retrieve them with correct order id
         response = self.app.get(f"{BASE_URL}/{orders[0].id}/items/{item_id_order_0}")
@@ -575,7 +575,7 @@ class TestOrderService(TestCase):
         response = self.app.delete(f"{BASE_URL}/{order_id}/items/{item_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        self.assertIn(f"Order with id '{order_id}' was not found.", data["message"])
+        self.assertEqual(data["message"], f"Order with id '{order_id}' was not found.")
 
     def test_delete_item_incorrect_order(self):
         """It should not delete a item when item with order id can't be found"""
@@ -757,7 +757,7 @@ class TestOrderService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
-        self.assertIn(f"Item with id '{item_id}' was not found.", data["message"])
+        self.assertEqual(data["message"], f"Item with id '{item_id}' was not found.")
 
     def test_update_item_nonexistent_order(self):
         """It should not Update an item given wrong order id"""
@@ -784,7 +784,7 @@ class TestOrderService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         data = resp.get_json()
-        self.assertIn(f"Order with id '{updated_item.order_id}' was not found.", data["message"])
+        self.assertEqual(data["message"], f"Order with id '{updated_item.order_id}' was not found.")
 
     def test_update_item_changed_id(self):
         """It should not Update an item's order id and item id"""
