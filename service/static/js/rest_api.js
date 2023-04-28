@@ -343,7 +343,7 @@ $(function () {
             let firstItem = "";
             for (let i = 0; i < res.length; i++) {
                 let item = res[i];
-                table += `<tr id="row_${i}"><td>${item.id}</td><td>${item.product_id}</td><td>${item.quantity}</td><td>${item.price}</td><td>${item.created_on}</td><td>${item.updated_on}</td></tr>`;
+                table += `<tr id="row_${i}"><td>${item.id}</td><td>${item.product_id}</td><td>${item.price}</td><td>${item.quantity}</td><td>${item.created_on}</td><td>${item.updated_on}</td></tr>`;
                 if (i == 0) {
                     firstItem = item;
                 }
