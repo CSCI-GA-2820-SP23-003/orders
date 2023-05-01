@@ -183,7 +183,6 @@ $(function () {
         let order_id = $("#order_id").val();
 
         if (!order_id || order_id == "") {
-            clear_form_data();
             flash_message("Order ID is required for Update Operation")
             return
         }
@@ -426,13 +425,11 @@ $(function () {
         let item_id = $("#order_item_id").val();
 
         if (!order_id || order_id == "") {
-            clear_form_data();
             flash_message("Order ID is required for Update Operation")
             return
         }
 
         if (!item_id || item_id == "") {
-            clear_form_data();
             flash_message("Item ID is required for Update Operation")
             return
         }
@@ -475,13 +472,13 @@ $(function () {
         let item_id = $("#order_item_id").val();
 
         if (!order_id || order_id == "") {
-            clear_form_data();
+            clear_item_form_data();
             flash_message("Order ID is required for Delete Operation")
             return
         }
 
         if (!item_id || item_id == "") {
-            clear_form_data();
+            clear_item_form_data();
             flash_message("Item ID is required for Delete Operation")
             return
         }
