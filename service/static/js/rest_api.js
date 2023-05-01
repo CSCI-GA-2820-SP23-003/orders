@@ -181,6 +181,12 @@ $(function () {
     $("#update-btn").click(function () {
 
         let order_id = $("#order_id").val();
+
+        if (!order_id) {
+            clear_form_data();
+            flash_message("Order id cannot be empty for update an order")
+            return
+        }
         let customer_id = $("#order_customer_id").val();
         let status = $("#order_status").val();
 
@@ -246,6 +252,12 @@ $(function () {
         let order_id = $("#order_id").val();
 
         $("#flash_message").empty();
+
+        if (!order_id) {
+            clear_form_data();
+            flash_message("Order id cannot be empty for delete an order")
+            return
+        }
 
         let ajax = $.ajax({
             type: "DELETE",
@@ -412,6 +424,19 @@ $(function () {
 
         let order_id = $("#order_order_id").val();
         let item_id = $("#order_item_id").val();
+
+        if (!order_id || order_id == "") {
+            clear_form_data();
+            flash_message("Order id cannot be empty for update an item")
+            return
+        }
+
+        if (!item_id || item_id == "") {
+            clear_form_data();
+            flash_message("Item id cannot be empty for update an item")
+            return
+        }
+
         let price = $("#order_price").val();
         let quantity = $("#order_quantity").val();
         let product_id = $("#order_product_id").val();
@@ -446,8 +471,20 @@ $(function () {
     // ****************************************
 
     $("#delete-item-btn").click(function () {
-        let order_id = $("#order_id").val();
+        let order_id = $("#order_order_id").val();
         let item_id = $("#order_item_id").val();
+
+        if (!order_id || order_id == "") {
+            clear_form_data();
+            flash_message("Order id cannot be empty for delete an item")
+            return
+        }
+
+        if (!item_id || item_id == "") {
+            clear_form_data();
+            flash_message("Item id cannot be empty for delete an item")
+            return
+        }
 
         $("#flash_message").empty();
 

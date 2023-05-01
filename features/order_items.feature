@@ -103,3 +103,37 @@ Feature: The order service back-end
         And the "Product ID" field should be empty
         And the "Price" field should be empty
         And the "Quantity" field should be empty
+
+    Scenario: Delete a non-existing Item
+        When I visit the "Home Page"
+        And I press the "Clear Item" button
+        And I press the "Delete Item" button
+        Then I should see the message "Order id cannot be empty for delete an item"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
+        When I set the "Order ID" to "1"
+        And I press the "Delete Item" button
+        Then I should see the message "Item id cannot be empty for delete an item"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
+
+    Scenario: Update a non-existing Item
+        When I visit the "Home Page"
+        And I press the "Clear Item" button
+        And I press the "Update Item" button
+        Then I should see the message "Order id cannot be empty for update an item"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
+        When I set the "Order ID" to "1"
+        And I press the "Update Item" button
+        Then I should see the message "Item id cannot be empty for update an item"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
