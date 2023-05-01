@@ -328,9 +328,20 @@ class OrderItem(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.product_id = data["product_id"]
-            self.quantity = data["quantity"]
-            self.price = data["price"]
+            if isinstance(data["product_id"], int) and data["product_id"] >= 0:
+                self.product_id = data["product_id"]
+            else:
+                raise DataValidationError("Invalid Product ID: Number Required")
+            if isinstance(data["quantity"], int) and data["quantity"] >= 1:
+                self.quantity = data["quantity"]
+            elif not isinstance(data["quantity"], int):
+                raise DataValidationError("Invalid Quantity: Number Required")
+            else:
+                raise DataValidationError("Quantity should be at least 1")
+            if isinstance(data["price"], (float, int)) and data["price"] >= 0:
+                self.price = data["price"]
+            else:
+                raise DataValidationError("Invalid Price: Number Required")
             self.updated_on = date.today()
         except KeyError as error:
             raise DataValidationError(
@@ -342,20 +353,6 @@ class OrderItem(db.Model):
                 "Error message: " + str(error)
             ) from error
 
-        try:
-            self.product_id = int(self.product_id)
-        except ValueError as error:
-            raise DataValidationError("Invalid product_id: number required") from error
-
-        try:
-            self.quantity = int(self.quantity)
-        except ValueError as error:
-            raise DataValidationError("Invalid quantity: number required") from error
-
-        try:
-            self.price = float(self.price)
-        except ValueError as error:
-            raise DataValidationError("Invalid price: number required") from error
         return self
 
     ##################################################
