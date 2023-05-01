@@ -182,9 +182,9 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
-        if (!order_id) {
+        if (!order_id || order_id == "") {
             clear_form_data();
-            flash_message("Order id cannot be empty for update an order")
+            flash_message("Order ID is required for Update Operation")
             return
         }
         let customer_id = $("#order_customer_id").val();
@@ -253,9 +253,9 @@ $(function () {
 
         $("#flash_message").empty();
 
-        if (!order_id) {
+        if (!order_id || order_id == "") {
             clear_form_data();
-            flash_message("Order id cannot be empty for delete an order")
+            flash_message("Order ID is required for Delete Operation")
             return
         }
 
@@ -427,13 +427,13 @@ $(function () {
 
         if (!order_id || order_id == "") {
             clear_form_data();
-            flash_message("Order id cannot be empty for update an item")
+            flash_message("Order ID is required for Update Operation")
             return
         }
 
         if (!item_id || item_id == "") {
             clear_form_data();
-            flash_message("Item id cannot be empty for update an item")
+            flash_message("Item ID is required for Update Operation")
             return
         }
 
@@ -476,13 +476,13 @@ $(function () {
 
         if (!order_id || order_id == "") {
             clear_form_data();
-            flash_message("Order id cannot be empty for delete an item")
+            flash_message("Order ID is required for Delete Operation")
             return
         }
 
         if (!item_id || item_id == "") {
             clear_form_data();
-            flash_message("Item id cannot be empty for delete an item")
+            flash_message("Item ID is required for Delete Operation")
             return
         }
 

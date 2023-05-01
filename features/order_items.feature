@@ -25,6 +25,7 @@ Feature: The order service back-end
         And I press the "Create" button
         Then I should see the message "Success"
         When I copy the "ID" field
+        And I press the "Clear" button
         And I paste the "Order ID" field
         And I set the "Product ID" to "1"
         And I set the "Price" to "5"
@@ -58,6 +59,7 @@ Feature: The order service back-end
         When I press the "Clear Item" button
         Then the "Item ID" field should be empty
         When I copy the "ID" field
+        And I press the "Clear" button
         And I paste the "Order ID" field
         And I press the "List Item" button
         Then I should see the message "Success"
@@ -73,6 +75,7 @@ Feature: The order service back-end
         When I press the "Clear Item" button
         Then the "Item ID" field should be empty
         When I copy the "ID" field
+        And I press the "Clear" button
         And I paste the "Order ID" field
         And I press the "List Item" button
         Then I should see the message "Success"
@@ -96,7 +99,8 @@ Feature: The order service back-end
         And I press the "List Item" button
         Then I should see the message "Success"
         And I should see "233" in the "Product ID" field
-        When I press the "Delete Item" button
+        When I press the "Clear" button
+        And I press the "Delete Item" button
         Then I should see the message "Item has been Deleted!"
         When I press the "Retrieve Item" button
         Then I should see the message "not found"
@@ -106,16 +110,17 @@ Feature: The order service back-end
 
     Scenario: Delete a non-existing Item
         When I visit the "Home Page"
+        And I press the "Clear" button
         And I press the "Clear Item" button
         And I press the "Delete Item" button
-        Then I should see the message "Order id cannot be empty for delete an item"
+        Then I should see the message "Order ID is required for Delete Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
         And the "Updated On" field should be empty
         When I set the "Order ID" to "1"
         And I press the "Delete Item" button
-        Then I should see the message "Item id cannot be empty for delete an item"
+        Then I should see the message "Item ID is required for Delete Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
@@ -123,16 +128,17 @@ Feature: The order service back-end
 
     Scenario: Update a non-existing Item
         When I visit the "Home Page"
+        And I press the "Clear" button
         And I press the "Clear Item" button
         And I press the "Update Item" button
-        Then I should see the message "Order id cannot be empty for update an item"
+        Then I should see the message "Order ID is required for Update Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
         And the "Updated On" field should be empty
         When I set the "Order ID" to "1"
         And I press the "Update Item" button
-        Then I should see the message "Item id cannot be empty for update an item"
+        Then I should see the message "Item ID is required for Update Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty

@@ -193,7 +193,7 @@ Feature: The order service back-end
         When I visit the "Home Page"
         And I press the "Clear" button
         And I press the "Delete" button
-        Then I should see the message "Order id cannot be empty for delete an order"
+        Then I should see the message "Order ID is required for Delete Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
@@ -203,7 +203,7 @@ Feature: The order service back-end
         When I visit the "Home Page"
         And I press the "Clear" button
         And I press the "Update" button
-        Then I should see the message "Order id cannot be empty for update an order"
+        Then I should see the message "Order ID is required for Update Operation"
         Then the "ID" field should be empty
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
