@@ -132,7 +132,10 @@ class Order(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.customer_id = int(data["customer_id"])
+            if isinstance(data["customer_id"], int) and data["customer_id"] >= 0:
+                self.customer_id = data["customer_id"]
+            else:
+                raise DataValidationError("Invalid Customer ID: Number Required")
             if "status" in data:
                 self.status = getattr(OrderStatus, data["status"])
             else:
@@ -154,8 +157,6 @@ class Order(db.Model):
                 "Invalid Order: body of request contained bad or no data - "
                 "Error message: " + str(error)
             ) from error
-        except ValueError as error:
-            raise DataValidationError("Invalid customer_id: number required") from error
         return self
 
     ##################################################

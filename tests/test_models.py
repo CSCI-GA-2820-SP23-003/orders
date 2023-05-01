@@ -192,6 +192,16 @@ class TestOrderModel(unittest.TestCase):
         self.assertEqual(order.status, OrderStatus.CONFIRMED)
         self.assertEqual(order.updated_on, date.today())
 
+    def test_deserialize_zero_customer_id(self):
+        """It should de-serialize an Order"""
+        data = OrderFactory().serialize()
+        data['customer_id'] = 0
+        order = Order()
+        order.deserialize(data)
+        self.assertNotEqual(order, None)
+        self.assertEqual(order.customer_id, data['customer_id'])
+        self.assertEqual(order.updated_on, date.today())
+
     def test_deserialize_missing_data(self):
         """It should not deserialize an Order with missing data"""
         data = {"id": 1}
@@ -223,11 +233,30 @@ class TestOrderModel(unittest.TestCase):
         self.assertRaises(DataValidationError, order.deserialize, data)
 
     def test_deserialize_bad_customer_id(self):
-        """ Deserialize an order with a ValueError """
+        """ Deserialize an order with bad customer id """
         test_order = OrderFactory()
         data = test_order.serialize()
         data['customer_id'] = "abcd"  # wrong value
         order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+    def test_deserialize_string_customer_id(self):
+        """ Deserialize an order with bad customer id """
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data['customer_id'] = "123"  # wrong value
+        order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+    def test_deserialize_negative_customer_id(self):
+        """ Deserialize an order with bad customer id """
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data['customer_id'] = "-1"  # wrong value
+        order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+        data['customer_id'] = -1  # wrong value
         self.assertRaises(DataValidationError, order.deserialize, data)
 
     def test_find_order(self):
