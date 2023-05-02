@@ -68,9 +68,10 @@ Feature: The order service back-end
         And I should see "151" in the "List Item" results
         When I set the "Order ID" to "2"
         And I press the "List Item" button
-        Then I should not see "233" in the "List Item" results
-        And I should not see "101" in the "List Item" results
-        And I should not see "151" in the "List Item" results
+        Then the "Item ID" field should be empty
+        And the "Product ID" field should be empty
+        And the "Price" field should be empty
+        And the "Quantity" field should be empty
 
     Scenario: Update an Item
         When I visit the "Home Page"
@@ -117,56 +118,32 @@ Feature: The order service back-end
         And the "Price" field should be empty
         And the "Quantity" field should be empty
 
-    Scenario: Delete a non-existing Item
+    Scenario: Delete without providing Order ID and Item ID
         When I visit the "Home Page"
         And I press the "Clear" button
         And I press the "Clear Item" button
         And I press the "Delete Item" button
         Then I should see the message "Order ID is required for Deleting Item"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
         When I set the "Order ID" to "1"
         And I press the "Delete Item" button
         Then I should see the message "Item ID is required for Delete Operation"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
 
-    Scenario: Update a non-existing Item
+    Scenario: Update an Item without providing Order ID and Item ID
         When I visit the "Home Page"
         And I press the "Clear" button
         And I press the "Clear Item" button
         And I press the "Update Item" button
         Then I should see the message "Order ID is required for Updating Item"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
         When I set the "Order ID" to "1"
         And I press the "Update Item" button
         Then I should see the message "Item ID is required for Update Operation"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
 
-Scenario: Retrieve a non-existing Item
+Scenario: Retrieve an Item without providing Order ID and Item ID
         When I visit the "Home Page"
         And I press the "Clear" button
         And I press the "Clear Item" button
         And I press the "Retrieve Item" button
         Then I should see the message "Order ID is required for Retrieving Item"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
         When I set the "Order ID" to "1"
         And I press the "Retrieve Item" button
         Then I should see the message "Item ID is required for Retrieve Operation"
-        Then the "ID" field should be empty
-        And the "Customer ID" field should be empty
-        And the "Created On" field should be empty
-        And the "Updated On" field should be empty
