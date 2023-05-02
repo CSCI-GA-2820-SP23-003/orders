@@ -31,25 +31,46 @@ The project contains the following:
 ```text
 .gitignore          - this will ignore vagrant and other metadata files
 .flaskenv           - Environment variables to configure Flask
-.gitattributes      - File to gix Windows CRLF issues
-.devcontainers/     - Folder with support for VSCode Remote Containers
+.gitattributes      - File to fix Windows CRLF issues
+.devcontainer/      - Folder with support for VSCode Remote Containers
 dot-env-example     - copy to .env to use environment variables
-requirements.txt    - list if Python libraries required by your code
-config.py           - configuration parameters
+requirements.txt    - list of Python libraries required by your code
+setup.cfg           - configuration parameters
 
 service/                   - service python package
 ├── __init__.py            - package initializer
+├── config.py              - configs for the app
 ├── models.py              - module with business models
 ├── routes.py              - module with service routes
 └── common                 - common code package
+    ├── cli_commands       - custom commands to use with flask
     ├── error_handlers.py  - HTTP error handling code
     ├── log_handlers.py    - logging setup code
     └── status.py          - HTTP status constants
+└── static                 - code for UI of the homepage
+    ├── css/               - styles for index.html
+    ├── images/            - images for index.html
+    ├── js/                - javascripts for index.html
+    └── index.html         - the root for UI webpage
 
-tests/              - test cases package
-├── __init__.py     - package initializer
-├── test_models.py  - test suite for business models
-└── test_routes.py  - test suite for service routes
+tests/                - test cases package
+├── __init__.py       - package initializer
+├── factories.py      - factory to generate instances of model
+├── test_cli_commands - tests custom flask cli commands
+├── test_models.py    - test suite for business models
+└── test_routes.py    - test suite for service routes
+
+features/             - bdd test cases package
+├── customers.feature - customers and address test scenarios
+├── environment.py    - environment for bdd tests
+└── steps             - code for describing bdd steps
+    ├── steps.py      - steps for customers.feature
+    ├── web_steps.py  - steps for web interaction with selenium
+    
+deploy/               - yaml files for kubernetes deployment
+├── deployment.yaml   - Deployment for customers api
+├── postgresql.yaml   - StatefulSet, Service, Secret for postgres db 
+├── service.yaml      - Service for customers api
 ```
 
 ## Order Service APIs
@@ -63,7 +84,7 @@ Success Response : `200 OK`
 ```
 {
   "name": "Order REST API Service",
-  "paths": "http://localhost:8000/orders",
+  "paths": "http://localhost:8080/orders",
   "version": "1.0"
 }
 ```
@@ -76,7 +97,7 @@ Success Response : `200 OK`
 | Read/Get an Order by ID   | GET `/orders/<order_id>`
 | Update an existing Order | PUT `/orders/<order_id>`
 | Delete an Order | DELETE `/orders/<order_id>`
-| List Orders     | GET `/orders`
+| Search Orders     | GET `/orders?<query_field>=<query_value>`
 
 ### Order Item Operations
 
@@ -157,6 +178,48 @@ Failure Response : `404 NOT FOUND`
 }
 ```
 
+### Cancel an Order
+
+Endpoint : `/orders/<order_id>/cancel`
+
+Method : `PUT`
+
+Authentication required : `None`
+
+Example:
+
+`PUT /orders/1`
+
+Success Response : `200 OK`
+```
+{
+  "created_on": "2023-03-07",
+  "customer_id": 6,
+  "id": 1,
+  "items": [],
+  "status": "CANCELLED",
+  "updated_on": "2023-03-07"
+}
+```
+
+Failure Response : `404 NOT FOUND`
+```
+{
+  "error": "Not Found",
+  "message": "404 Not Found: Order with id '1' was not found.",
+  "status": 404
+}
+```
+
+Failure Response : `409 CONFLICT`
+```
+{
+  "error": "Conflict",
+  "message": "409 Conflict: Order with id '1' cannot be cancelled.",
+  "status": 409
+}
+```
+
 ### Update an Order
 
 Endpoint : `/orders/<order_id>`
@@ -216,9 +279,9 @@ Example:
 
 Success Response : `204 NO CONTENT`
 
-### List All Orders
+### Search All Orders
 
-Endpoint : `/orders`
+Endpoint : `/orders?<query_field>=<query_value>`
 
 Method : `GET`
 
@@ -226,7 +289,7 @@ Authentication required : `None`
 
 Example:
 
-`GET /orders`
+`GET /orders?customer_id=6`
 
 Success Response : `200 OK`
 ```
@@ -446,6 +509,17 @@ Follow these steps to run the BDD tests locally:
 1. Once the container is up and running, execute `honcho start`.
 2. Open another terminal window within the container and execute `behave`.
 3. The BDD tests should start running and displaying the results.
+
+## Accessing the Service on the Cloud
+
+The service is deployed on the Kubernetes clusters in the Cloud. You can access it at:
+
+* Development cluster url: `http://159.122.186.49:31001`
+* Production cluster url: `http://159.122.186.49:31002`
+
+## Flask-RESTX
+
+You can find the API documentation at `[url]/apidocs`, for example: `http://localhost:8080/apidocs`
 
 ## License
 
