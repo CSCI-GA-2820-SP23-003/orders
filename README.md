@@ -68,9 +68,9 @@ features/                 - bdd test cases package
     ├── steps.py          - steps for orders.feature and order_items.feature
     
 deploy/               - yaml files for kubernetes deployment
-├── deployment.yaml   - Deployment for customers api
+├── deployment.yaml   - Deployment for orders api
 ├── postgresql.yaml   - StatefulSet, Service, Secret for postgres db 
-├── service.yaml      - Service for customers api
+├── service.yaml      - Service for orders api
 ```
 
 ## Order Service APIs
