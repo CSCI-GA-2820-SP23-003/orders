@@ -129,7 +129,7 @@ class OrderResource(Resource):
         """
         Retrieve a single Order
 
-        This endpoint will return an Order based on it's id
+        This endpoint will return an Order based on its ID.
         """
         app.logger.info('Request for order with id: %s', order_id)
         order = Order.find(order_id)
@@ -150,7 +150,7 @@ class OrderResource(Resource):
         """
         Update an Order
 
-        This endpoint will update an Order based on the body that is posted
+        This endpoint will update an Order based on the body that is posted.
         """
         app.logger.info('Request to update order with id: %s', order_id)
         order = Order.find(order_id)
@@ -176,7 +176,7 @@ class OrderResource(Resource):
         """
         Delete an Order
 
-        This endpoint will delete an Order based on the id specified in the path
+        This endpoint will delete an Order based on the id specified in the path.
         """
         app.logger.info('Request to delete order with id: %s', order_id)
         order = Order.find(order_id)
@@ -200,7 +200,11 @@ class OrderCollection(Resource):
     @api.expect(order_args, validate=True)
     @api.marshal_list_with(order_model)
     def get(self):
-        """List all of the Orders"""
+        """
+        List all of the Orders
+
+        This endpoint will return all the orders matching the specified criteria.
+        """
         app.logger.info('Request to list Orders...')
         orders = []
         args = order_args.parse_args()
@@ -234,7 +238,7 @@ class OrderCollection(Resource):
         """
         Creates an Order
 
-        This endpoint will create an Order based on the data in the body that is posted
+        This endpoint will create an Order based on the data in the body that is posted.
         """
         app.logger.info('Request to Create an Order')
         order = Order()
@@ -259,7 +263,7 @@ class CancelOrderResource(Resource):
         """
         Cancel an Order
 
-        This endpoint will cancel an Order by id
+        This endpoint will cancel an Order by ID.
         """
         app.logger.info('Request to cancel order with order_id: [%s]', order_id)
         order = Order.find(order_id)
@@ -306,7 +310,7 @@ class OrderItemResource(Resource):
         """
         Retrieve an order item
 
-        This endpoint will return an item from an order based on its id
+        This endpoint will return an item from an order based on its ID.
         """
         app.logger.info('Request to retrieve an Item %s from Order with id: %s', item_id, order_id)
         order = Order.find(order_id)
@@ -336,7 +340,7 @@ class OrderItemResource(Resource):
         """
         Update an item from an order
 
-        This endpoint will update an Order Item based on the body that is posted
+        This endpoint will update an Order Item based on the body that is posted.
         """
         app.logger.info('Request to update item with order_id [%s] and item_id [%s] ...', order_id, item_id)
 
@@ -366,7 +370,7 @@ class OrderItemResource(Resource):
         """
         Delete an item from an order
 
-        This endpoint will delete an Order Item based on the id specified in the path
+        This endpoint will delete an Order Item based on the id specified in the path.
         """
         app.logger.info('Request to delete item with order_id [%s] and item_id [%s] ...', item_id, order_id)
 
@@ -394,7 +398,11 @@ class OrderItemCollection(Resource):
     @api.doc('list_order_items')
     @api.marshal_list_with(item_model)
     def get(self, order_id):
-        """List all of the Items from an Order"""
+        """
+        List all of the Items from an Order
+
+        This endpoint will return all the Items by Order ID.
+        """
         app.logger.info('Request to list Items for Order with id: %s', order_id)
         order = Order.find(order_id)
         if not order:
@@ -415,7 +423,7 @@ class OrderItemCollection(Resource):
         """
         Create an item on an order
 
-        This endpoint will add a new item to an order
+        This endpoint will add a new item to an order.
         """
         app.logger.info('Request to create an Item for Order with id: %s', order_id)
         order = Order.find(order_id)
