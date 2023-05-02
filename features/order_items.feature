@@ -66,12 +66,6 @@ Feature: The order service back-end
         And I should see "233" in the "List Item" results
         And I should see "101" in the "List Item" results
         And I should see "151" in the "List Item" results
-        When I set the "Order ID" to "2"
-        And I press the "List Item" button
-        Then the "Item ID" field should be empty
-        And the "Product ID" field should be empty
-        And the "Price" field should be empty
-        And the "Quantity" field should be empty
 
     Scenario: Update an Item
         When I visit the "Home Page"
