@@ -19,7 +19,7 @@ To run the Orders service on a local machine, first clone the repository and the
 1. `cd orders`
 2. `code .`
 3. Reopen the folder in Dev Container
-4. Run `flask run` command on the terminal
+4. Run `honcho start` command on the terminal
 5. The service is available at localhost: `http://localhost:8080`
 
 To run the all the test cases locally, please run the command `nosetests`. 
@@ -60,17 +60,17 @@ tests/                - test cases package
 ├── test_models.py    - test suite for business models
 └── test_routes.py    - test suite for service routes
 
-features/             - bdd test cases package
-├── customers.feature - customers and address test scenarios
-├── environment.py    - environment for bdd tests
-└── steps             - code for describing bdd steps
-    ├── steps.py      - steps for customers.feature
-    ├── web_steps.py  - steps for web interaction with selenium
+features/                 - bdd test cases package
+├── orders.feature        - orders test scenarios
+├── order_items.feature   - order_items test scenarios
+├── environment.py        - environment for bdd tests
+└── steps                 - code for describing bdd steps
+    ├── steps.py          - steps for orders.feature and order_items.feature
     
 deploy/               - yaml files for kubernetes deployment
-├── deployment.yaml   - Deployment for customers api
+├── deployment.yaml   - Deployment for orders api
 ├── postgresql.yaml   - StatefulSet, Service, Secret for postgres db 
-├── service.yaml      - Service for customers api
+├── service.yaml      - Service for orders api
 ```
 
 ## Order Service APIs
