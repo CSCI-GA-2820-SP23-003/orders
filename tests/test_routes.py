@@ -131,6 +131,33 @@ class TestOrderService(TestCase):
         self.assertEqual(new_order["status"], test_order.status.name)
         self.assertEqual(len(new_order["items"]), 0)
 
+    def test_create_order_with_default_status(self):
+        """It should Create a new Order"""
+        test_order = OrderFactory().serialize()
+        del test_order['status']
+        response = self.app.post(
+            BASE_URL, json=test_order, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check the data is correct
+        new_order = response.get_json()
+        self.assertNotEqual(new_order["id"], None)
+        self.assertEqual(new_order["customer_id"], test_order['customer_id'])
+        self.assertEqual(new_order["status"], OrderStatus.CONFIRMED.name)
+
+    def test_create_order_with_0_customer_id(self):
+        """It should Create a new Order"""
+        test_order = OrderFactory().serialize()
+        test_order['customer_id'] = 0
+        response = self.app.post(
+            BASE_URL, json=test_order, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check the data is correct
+        new_order = response.get_json()
+        self.assertNotEqual(new_order["id"], None)
+        self.assertEqual(new_order["customer_id"], test_order['customer_id'])
+
     def test_get_order(self):
         """It should Read a single Order"""
         # get the id of a order
@@ -349,6 +376,18 @@ class TestOrderService(TestCase):
         # change customer id to a bad string
         test_order = order.serialize()
         test_order["customer_id"] = "abcd"  # wrong value
+        response = self.app.post(BASE_URL, json=test_order)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_order["customer_id"] = "123"  # wrong value
+        response = self.app.post(BASE_URL, json=test_order)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_order["customer_id"] = "-1"  # wrong value
+        response = self.app.post(BASE_URL, json=test_order)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_order["customer_id"] = -1  # wrong value
         response = self.app.post(BASE_URL, json=test_order)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -695,6 +734,18 @@ class TestOrderService(TestCase):
         response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        test_item["product_id"] = "123"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["product_id"] = "-1"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["product_id"] = -1  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_create_item_bad_quantity(self):
         """It should not Create an Order Item with bad quantity"""
         order = self._create_orders(1)[0]
@@ -705,6 +756,22 @@ class TestOrderService(TestCase):
         response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        test_item["quantity"] = "123"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["quantity"] = "-1"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["quantity"] = -1  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["quantity"] = 0  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_create_item_bad_price(self):
         """It should not Create an Order Item with bad price"""
         order = self._create_orders(1)[0]
@@ -712,6 +779,22 @@ class TestOrderService(TestCase):
         # change product id to a bad string
         test_item = item.serialize()
         test_item["price"] = "abcd"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["price"] = "123"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["price"] = "-1"  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["price"] = -1  # wrong value
+        response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        test_item["price"] = "0.0"  # wrong value
         response = self.app.post(f"{BASE_URL}/{order.id}/items", json=test_item)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 

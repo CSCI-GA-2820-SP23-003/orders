@@ -32,7 +32,7 @@ class OrderItemFactory(factory.Factory):
 
     id = factory.Sequence(lambda n: n)
     product_id = factory.Sequence(lambda n: n)
-    quantity = factory.Sequence(lambda n: n)
+    quantity = factory.Sequence(lambda n: n+1)
     price = factory.Sequence(lambda n: n*100)
     order_id = factory.Sequence(lambda n: n)
     created_on = FuzzyDate(date(2008, 1, 1))

@@ -192,6 +192,16 @@ class TestOrderModel(unittest.TestCase):
         self.assertEqual(order.status, OrderStatus.CONFIRMED)
         self.assertEqual(order.updated_on, date.today())
 
+    def test_deserialize_zero_customer_id(self):
+        """It should de-serialize an Order"""
+        data = OrderFactory().serialize()
+        data['customer_id'] = 0
+        order = Order()
+        order.deserialize(data)
+        self.assertNotEqual(order, None)
+        self.assertEqual(order.customer_id, data['customer_id'])
+        self.assertEqual(order.updated_on, date.today())
+
     def test_deserialize_missing_data(self):
         """It should not deserialize an Order with missing data"""
         data = {"id": 1}
@@ -223,11 +233,30 @@ class TestOrderModel(unittest.TestCase):
         self.assertRaises(DataValidationError, order.deserialize, data)
 
     def test_deserialize_bad_customer_id(self):
-        """ Deserialize an order with a ValueError """
+        """ Deserialize an order with bad customer id """
         test_order = OrderFactory()
         data = test_order.serialize()
         data['customer_id'] = "abcd"  # wrong value
         order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+    def test_deserialize_string_customer_id(self):
+        """ Deserialize an order with bad customer id """
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data['customer_id'] = "123"  # wrong value
+        order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+    def test_deserialize_negative_customer_id(self):
+        """ Deserialize an order with bad customer id """
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data['customer_id'] = "-1"  # wrong value
+        order = Order()
+        self.assertRaises(DataValidationError, order.deserialize, data)
+
+        data['customer_id'] = -1  # wrong value
         self.assertRaises(DataValidationError, order.deserialize, data)
 
     def test_find_order(self):
@@ -595,6 +624,20 @@ class TestOrderItemModel(unittest.TestCase):
         self.assertEqual(item.price, data['price'])
         self.assertEqual(item.updated_on, date.today())
 
+    def test_deserialize_zero_numerical_values(self):
+        """It should de-serialize an Order """
+        data = OrderItemFactory().serialize()
+        data['product_id'] = 0
+        data['quantity'] = 1
+        data['price'] = 0.0
+        item = OrderItem()
+        item.deserialize(data)
+        self.assertNotEqual(item, None)
+        self.assertEqual(item.product_id, data['product_id'])
+        self.assertEqual(item.quantity, data['quantity'])
+        self.assertEqual(item.price, data['price'])
+        self.assertEqual(item.updated_on, date.today())
+
     def test_deserialize_missing_data(self):
         """It should not deserialize an Order Item with missing data"""
         data = {"id": 1}
@@ -625,6 +668,15 @@ class TestOrderItemModel(unittest.TestCase):
         order_item = OrderItem()
         self.assertRaises(DataValidationError, order_item.deserialize, data)
 
+        data['product_id'] = "123"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['product_id'] = "-1"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['product_id'] = -1  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
     def test_deserialize_bad_quantity(self):
         """ Deserialize an order item with a ValueError """
         test_order_item = OrderItemFactory()
@@ -633,12 +685,36 @@ class TestOrderItemModel(unittest.TestCase):
         order_item = OrderItem()
         self.assertRaises(DataValidationError, order_item.deserialize, data)
 
+        data['quantity'] = "123"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['quantity'] = "-1"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['quantity'] = "0"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['quantity'] = -1  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['quantity'] = 0  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
     def test_deserialize_bad_price(self):
         """ Deserialize an order item with a ValueError """
         test_order_item = OrderItemFactory()
         data = test_order_item.serialize()
         data['price'] = "abcd"  # wrong value
         order_item = OrderItem()
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['price'] = "123"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['price'] = "-1"  # wrong value
+        self.assertRaises(DataValidationError, order_item.deserialize, data)
+
+        data['price'] = -1  # wrong value
         self.assertRaises(DataValidationError, order_item.deserialize, data)
 
     def test_find_order_item(self):

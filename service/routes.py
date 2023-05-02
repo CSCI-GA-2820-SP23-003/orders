@@ -28,11 +28,11 @@ from . import app, api
 
 # Models
 item_create_model = api.model('ItemCreate', {
-    'product_id': fields.Integer(required=True,
+    'product_id': fields.Integer(required=True, min=0,
                                  description='ID of the product that was purchased'),
-    'quantity': fields.Integer(required=True,
+    'quantity': fields.Integer(required=True, min=1,
                                description='The quantity of the product purchased'),
-    'price': fields.Float(required=True,
+    'price': fields.Float(required=True, min=0,
                           description='The price at which the product was purchased'),
 })
 
@@ -50,7 +50,7 @@ item_model = api.inherit(
 )
 
 order_core_model = api.model('OrderCore', {
-    'customer_id': fields.Integer(required=True,
+    'customer_id': fields.Integer(required=True, min=0,
                                   description='ID of the customer who placed the order'),
     'status': fields.String(enum=[s.name for s in OrderStatus], description='The status of the order'),
 })
