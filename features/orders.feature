@@ -165,6 +165,9 @@ Feature: The order service back-end
         And I should not see "CANCELLED" in the "Search" results
         And I should not see "9" in the "Customer ID" field
         And I should not see "2" in the "Customer ID" field
+        When I press the "Clear" button
+        And I set the "Customer ID" to "100"
+        Then I should not see "5" in the "Customer ID" field
 
     Scenario: Search for Order Status
         When I visit the "Home Page"

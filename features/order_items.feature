@@ -66,6 +66,11 @@ Feature: The order service back-end
         And I should see "233" in the "List Item" results
         And I should see "101" in the "List Item" results
         And I should see "151" in the "List Item" results
+        When I set the "Order ID" to "2"
+        And I press the "List Item" button
+        Then I should not see "233" in the "List Item" results
+        And I should not see "101" in the "List Item" results
+        And I should not see "151" in the "List Item" results
 
     Scenario: Update an Item
         When I visit the "Home Page"
