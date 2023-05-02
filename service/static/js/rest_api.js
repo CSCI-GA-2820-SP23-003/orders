@@ -87,6 +87,12 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
+        if (!order_id || order_id == "") {
+            clear_item_form_data();
+            flash_message("Order ID is required for Retrieve Operation")
+            return
+        }
+
         $("#flash_message").empty();
 
         let ajax = $.ajax({
@@ -222,6 +228,12 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
+        if (!order_id || order_id == "") {
+            clear_item_form_data();
+            flash_message("Order ID is required for Cancel Operation")
+            return
+        }
+
         $("#flash_message").empty();
 
         let ajax = $.ajax({
@@ -331,6 +343,12 @@ $(function () {
 
         let order_id = $("#order_order_id").val();
 
+        if (!order_id || order_id == "") {
+            clear_item_form_data();
+            flash_message("Order ID is required for List Operation")
+            return
+        }
+
         $("#flash_message").empty();
 
         let ajax = $.ajax({
@@ -396,6 +414,16 @@ $(function () {
         let item_id = $("#order_item_id").val();
         let order_id = $("#order_order_id").val();
 
+        if (!order_id || order_id == "") {
+            flash_message("Order ID is required for Retrieve Operation")
+            return
+        }
+
+        if (!item_id || item_id == "") {
+            flash_message("Item ID is required for Retrieve Operation")
+            return
+        }
+        
         var ajax = $.ajax({
             type: "GET",
             url: `/api/orders/${order_id}/items/${item_id}`,
