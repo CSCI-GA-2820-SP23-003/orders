@@ -177,8 +177,9 @@ $(function () {
                 update_form_data(firstOrder)
             }
             else{
-                clear_form_data();
-                $("#search_results").empty();
+                $("#order_id").val("");
+                $("#order_created_on").val("");
+                $("#order_updated_on").val("");
             }
 
             flash_message("Success")
@@ -186,7 +187,9 @@ $(function () {
 
         ajax.fail(function (res) {
             $("#search_results").empty();
-            clear_form_data();
+            $("#order_id").val("");
+            $("#order_created_on").val("");
+            $("#order_updated_on").val("");
             flash_message(res.responseJSON.message)
         });
 
@@ -412,7 +415,8 @@ $(function () {
                 update_item_form_data(firstItem)
             }
             else{
-                $("#list_item_results").empty();
+                $("#order_item_id").val("");
+                clear_item_form_data();
             }
 
             flash_message("Success")
@@ -420,6 +424,8 @@ $(function () {
 
         ajax.fail(function (res) {
             $("#list_item_results").empty();
+            $("#order_item_id").val("");
+            clear_item_form_data();
             flash_message(res.responseJSON.message)
         });
 

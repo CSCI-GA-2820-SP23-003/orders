@@ -167,7 +167,10 @@ Feature: The order service back-end
         And I should not see "2" in the "Customer ID" field
         When I press the "Clear" button
         And I set the "Customer ID" to "100"
-        Then I should not see "5" in the "Customer ID" field
+        Then the "ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
+        And I should see "100" in the "Customer ID" field
 
     Scenario: Search for Order Status
         When I visit the "Home Page"
