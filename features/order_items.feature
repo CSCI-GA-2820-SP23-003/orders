@@ -143,3 +143,21 @@ Feature: The order service back-end
         And the "Customer ID" field should be empty
         And the "Created On" field should be empty
         And the "Updated On" field should be empty
+
+Scenario: Retrieve a non-existing Item
+        When I visit the "Home Page"
+        And I press the "Clear" button
+        And I press the "Clear Item" button
+        And I press the "Retrieve Item" button
+        Then I should see the message "Order ID is required for Retrieve Operation"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
+        When I set the "Order ID" to "1"
+        And I press the "Retrieve Item" button
+        Then I should see the message "Item ID is required for Retrieve Operation"
+        Then the "ID" field should be empty
+        And the "Customer ID" field should be empty
+        And the "Created On" field should be empty
+        And the "Updated On" field should be empty
