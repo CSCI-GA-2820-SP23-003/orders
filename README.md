@@ -97,7 +97,7 @@ Success Response : `200 OK`
 | Read/Get an Order by ID   | GET `/orders/<order_id>`
 | Update an existing Order | PUT `/orders/<order_id>`
 | Delete an Order | DELETE `/orders/<order_id>`
-| Search Orders     | GET `/orders`
+| Search Orders     | GET `/orders?<query_field>=<query_value>`
 
 ### Order Item Operations
 
@@ -281,7 +281,7 @@ Success Response : `204 NO CONTENT`
 
 ### Search All Orders
 
-Endpoint : `/orders?[query_field]=[query_value]`
+Endpoint : `/orders?<query_field>=<query_value>`
 
 Method : `GET`
 
