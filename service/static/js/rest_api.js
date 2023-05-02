@@ -176,11 +176,17 @@ $(function () {
             if (firstOrder != "") {
                 update_form_data(firstOrder)
             }
+            else{
+                clear_form_data();
+                $("#search_results").empty();
+            }
 
             flash_message("Success")
         });
 
         ajax.fail(function (res) {
+            $("#search_results").empty();
+            clear_form_data();
             flash_message(res.responseJSON.message)
         });
 
@@ -405,11 +411,15 @@ $(function () {
             if (firstItem != "") {
                 update_item_form_data(firstItem)
             }
+            else{
+                $("#list_item_results").empty();
+            }
 
             flash_message("Success")
         });
 
         ajax.fail(function (res) {
+            $("#list_item_results").empty();
             flash_message(res.responseJSON.message)
         });
 
