@@ -27,7 +27,7 @@ def step_impl(context):
     # load the database with new orders
     for row in context.table:
         payload = {
-            "customer_id": row['Customer ID'],
+            "customer_id": int(row['Customer ID']),
             "status": row['Status'],
         }
         context.resp = requests.post(rest_endpoint, json=payload)
@@ -46,9 +46,9 @@ def step_impl(context):
     # Add the new items in the table
     for row in context.table:
         payload = {
-            "product_id": row['Product ID'],
-            "price": row['Price'],
-            "quantity": row['Quantity']
+            "product_id": int(row['Product ID']),
+            "price": float(row['Price']),
+            "quantity": int(row['Quantity'])
         }
         context.resp = requests.post(items_route, json=payload)
         expect(context.resp.status_code).to_equal(201)

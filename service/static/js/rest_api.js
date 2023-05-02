@@ -55,6 +55,13 @@ $(function () {
         let customer_id = $("#order_customer_id").val();
         let status = $("#order_status").val();
 
+        if (!customer_id) {
+            flash_message("Missing required fields: Customer ID")
+            return
+        }
+
+        customer_id = parseInt(customer_id, 10)
+
         let data = {
             "customer_id": customer_id,
             "status": status,
@@ -87,8 +94,7 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
-        if (!order_id || order_id == "") {
-            clear_item_form_data();
+        if (!order_id) {
             flash_message("Order ID is required for Retrieve Operation")
             return
         }
@@ -188,12 +194,20 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
-        if (!order_id || order_id == "") {
+        if (!order_id) {
             flash_message("Order ID is required for Update Operation")
             return
         }
+        
         let customer_id = $("#order_customer_id").val();
         let status = $("#order_status").val();
+
+        if (!customer_id) {
+            flash_message("Missing required fields: Customer ID")
+            return
+        }
+
+        customer_id = parseInt(customer_id, 10)
 
         let data = {
             "customer_id": customer_id,
@@ -228,8 +242,7 @@ $(function () {
 
         let order_id = $("#order_id").val();
 
-        if (!order_id || order_id == "") {
-            clear_item_form_data();
+        if (!order_id) {
             flash_message("Order ID is required for Cancel Operation")
             return
         }
@@ -264,8 +277,7 @@ $(function () {
 
         $("#flash_message").empty();
 
-        if (!order_id || order_id == "") {
-            clear_form_data();
+        if (!order_id) {
             flash_message("Order ID is required for Delete Operation")
             return
         }
@@ -309,6 +321,15 @@ $(function () {
         let quantity = $("#order_quantity").val();
         let order_id = $("#order_order_id").val();
         let price = $("#order_price").val();
+
+        if (!product_id || !quantity || !order_id || !price) {
+            flash_message("Missing required fields")
+            return
+        }
+
+        product_id = parseInt(product_id, 10)
+        quantity = parseInt(quantity, 10)
+        price = parseFloat(price, 10)
 
         let data = {
             "product_id": product_id,
@@ -414,12 +435,12 @@ $(function () {
         let item_id = $("#order_item_id").val();
         let order_id = $("#order_order_id").val();
 
-        if (!order_id || order_id == "") {
-            flash_message("Order ID is required for Retrieve Operation")
+        if (!order_id) {
+            flash_message("Order ID is required for Retrieving Item")
             return
         }
 
-        if (!item_id || item_id == "") {
+        if (!item_id) {
             flash_message("Item ID is required for Retrieve Operation")
             return
         }
@@ -452,12 +473,12 @@ $(function () {
         let order_id = $("#order_order_id").val();
         let item_id = $("#order_item_id").val();
 
-        if (!order_id || order_id == "") {
-            flash_message("Order ID is required for Update Operation")
+        if (!order_id) {
+            flash_message("Order ID is required for Updating Item")
             return
         }
 
-        if (!item_id || item_id == "") {
+        if (!item_id) {
             flash_message("Item ID is required for Update Operation")
             return
         }
@@ -465,6 +486,16 @@ $(function () {
         let price = $("#order_price").val();
         let quantity = $("#order_quantity").val();
         let product_id = $("#order_product_id").val();
+
+        if (!product_id || !quantity || !price) {
+            flash_message("Missing required fields")
+            return
+        }
+
+        product_id = parseInt(product_id, 10)
+        quantity = parseInt(quantity, 10)
+        price = parseFloat(price, 10)
+
         let data = {
             "price": price,
             "quantity": quantity,
@@ -499,14 +530,12 @@ $(function () {
         let order_id = $("#order_order_id").val();
         let item_id = $("#order_item_id").val();
 
-        if (!order_id || order_id == "") {
-            clear_item_form_data();
-            flash_message("Order ID is required for Delete Operation")
+        if (!order_id) {
+            flash_message("Order ID is required for Deleting Item")
             return
         }
 
-        if (!item_id || item_id == "") {
-            clear_item_form_data();
+        if (!item_id) {
             flash_message("Item ID is required for Delete Operation")
             return
         }
